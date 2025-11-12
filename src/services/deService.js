@@ -4,6 +4,13 @@ const utils = new CycleUtils();
 const fs = require("fs/promises");
 const path = require("path");
 
+const I18nService = require("../services/i18nService");
+// FIXME 获取可重用语言数据(默认中文)
+const getLocalizedData = async (lang = "zh") => {
+  const i18n = new I18nService(lang);
+  return i18n.load();
+};
+
 //   循环的持续时间和状态
 const loopItems = {
   夜灵平原: [
@@ -96,23 +103,9 @@ async function plainCycleProcess(data) {
 async function alertProcess(data) {
   try {
     // 加载本地化数据
-    const [solNodesStr, missionTypesStr, factionsStr] = await Promise.all([
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/solNodes.json"),
-        "utf8"
-      ),
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/missionTypes.json"),
-        "utf8"
-      ),
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/factionData.json"),
-        "utf8"
-      ),
-    ]);
-    const solNodes = JSON.parse(solNodesStr);
-    const missionTypes = JSON.parse(missionTypesStr);
-    const factionsData = JSON.parse(factionsStr);
+    const localizedData = await getLocalizedData();
+    const { solNodes, missionTypes, factionsData } = localizedData;
+
     // 获取原始数据
     const art = Array.isArray(data?.Alerts) ? data.Alerts : [];
     // 处理警报数据
@@ -164,25 +157,9 @@ async function alertProcess(data) {
 // FIXME 获取执行官突击周常
 async function archStorieProcess(data) {
   try {
-    // 加载本地数据
-    const [solNodesStr, missionTypeStr, bossesDataStr] = await Promise.all([
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/solNodes.json"),
-        "utf8"
-      ),
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/missionTypes.json"),
-        "utf8"
-      ),
-      fs.readFile(
-        path.join(__dirname, "../public/i18n/zh/sortieData.json"),
-        "utf8"
-      ),
-    ]);
-
-    const solNodes = JSON.parse(solNodesStr);
-    const missionType = JSON.parse(missionTypeStr);
-    const { archBosses } = JSON.parse(bossesDataStr);
+    // 加载本地化数据
+    const localizedData = await getLocalizedData();
+    const { solNodes, missionTypes, archBosses } = localizedData;
 
     // 防御性数据验证
     if (!data?.LiteSorties?.[0]) {
@@ -206,7 +183,7 @@ async function archStorieProcess(data) {
       missions: liteSortie.Missions.map((one) => ({
         node: solNodes[one.node]?.value || one.node || "未知节点",
         type:
-          missionType[one.missionType]?.value ||
+          missionTypes[one.missionType]?.value ||
           one.missionType ||
           "未知任务类型",
       })),
@@ -264,31 +241,9 @@ function invasionsReward(value, itemUniqueName) {
 // FIXME 获取入侵数据
 async function invasionsProcess(data) {
   try {
-    //  加载 JSON 文件
-    const solNodesPath = path.join(
-      __dirname,
-      "../public/i18n/zh/solNodes.json"
-    );
-    const factionsDataPath = path.join(
-      __dirname,
-      "../public/i18n/zh/factionData.json"
-    );
-    const itemsDataPath = path.join(
-      __dirname,
-      "../public/i18n/zh/itemsData.json"
-    ); // 假设物品数据也放在JSON文件中
-
-    // 并行读取所有文件
-    const [solNodesStr, factionsDataStr, itemsDataStr] = await Promise.all([
-      fs.readFile(solNodesPath, "utf8"),
-      fs.readFile(factionsDataPath, "utf8"),
-      fs.readFile(itemsDataPath, "utf8"),
-    ]);
-
-    // 解析JSON数据
-    const solNodes = JSON.parse(solNodesStr);
-    const factionsData = JSON.parse(factionsDataStr);
-    const itemUniqueName = JSON.parse(itemsDataStr); // 物品数据
+    // 加载本地化数据
+    const localizedData = await getLocalizedData();
+    const { solNodes, factionsData, itemsData } = localizedData;
 
     // 2. 处理入侵数据
     const invasions = [];
@@ -311,14 +266,14 @@ async function invasionsProcess(data) {
         attacker: {
           faction:
             factionsData[one.Faction]?.value || one.Faction || "未知阵营",
-          reward: invasionsReward(one.AttackerReward, itemUniqueName), // 传递物品数据
+          reward: invasionsReward(one.AttackerReward, itemsData), // 传递物品数据
         },
         defender: {
           faction:
             factionsData[one.DefenderFaction]?.value ||
             one.DefenderFaction ||
             "未知阵营",
-          reward: invasionsReward(one.DefenderReward, itemUniqueName), // 传递物品数据
+          reward: invasionsReward(one.DefenderReward, itemsData), // 传递物品数据
         },
       });
     });
