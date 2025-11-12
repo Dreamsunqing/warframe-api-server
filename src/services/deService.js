@@ -100,10 +100,10 @@ async function plainCycleProcess(data) {
 }
 
 // FIXME 获取警报
-async function alertProcess(data) {
+async function alertProcess(data, lang = "zh") {
   try {
     // 加载本地化数据
-    const localizedData = await getLocalizedData();
+    const localizedData = await getLocalizedData(lang);
     const { solNodes, missionTypes, factionsData } = localizedData;
 
     // 获取原始数据
@@ -155,10 +155,10 @@ async function alertProcess(data) {
 }
 
 // FIXME 获取执行官突击周常
-async function archStorieProcess(data) {
+async function archStorieProcess(data, lang = "zh") {
   try {
     // 加载本地化数据
-    const localizedData = await getLocalizedData();
+    const localizedData = await getLocalizedData(lang);
     const { solNodes, missionTypes, archBosses } = localizedData;
 
     // 防御性数据验证
@@ -239,10 +239,10 @@ function invasionsReward(value, itemUniqueName) {
 }
 
 // FIXME 获取入侵数据
-async function invasionsProcess(data) {
+async function invasionsProcess(data, lang = "zh") {
   try {
     // 加载本地化数据
-    const localizedData = await getLocalizedData();
+    const localizedData = await getLocalizedData(lang);
     const { solNodes, factionsData, itemsData } = localizedData;
 
     // 2. 处理入侵数据
@@ -286,34 +286,11 @@ async function invasionsProcess(data) {
 }
 
 // FIXME 处理每日突击
-async function sortieProcess(data) {
+async function sortieProcess(data, lang = "zh") {
   try {
-    // 使用 __dirname 构建绝对路径
-    const solNodesPath = path.join(
-      __dirname,
-      "../public/i18n/zh/solNodes.json"
-    );
-    const missionTypesPath = path.join(
-      __dirname,
-      "../public/i18n/zh/missionTypes.json"
-    );
-    const sortieDataPath = path.join(
-      __dirname,
-      "../public/i18n/zh/sortieData.json"
-    );
-
-    // 读取 JSON 文件
-    const [solNodesStr, missionTypesStr, sortieDataStr] = await Promise.all([
-      fs.readFile(solNodesPath, "utf8"),
-      fs.readFile(missionTypesPath, "utf8"),
-      fs.readFile(sortieDataPath, "utf8"),
-    ]);
-
-    const solNodes = JSON.parse(solNodesStr);
-    const missionTypes = JSON.parse(missionTypesStr);
-    const sortieData = JSON.parse(sortieDataStr);
-
-    const { modifierTypes } = sortieData;
+    // 加载本地化数据
+    const localizedData = await getLocalizedData(lang);
+    const { solNodes, missionTypes, modifierTypes, sortieData } = localizedData;
 
     // 确保数据存在
     if (!data?.Sorties?.[0]) {
