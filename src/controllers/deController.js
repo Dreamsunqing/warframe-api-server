@@ -80,10 +80,12 @@ const getPlainCycle = async (req, res) => {
     const data = await deService.plainCycleProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 // FIXME 处理警报信息
@@ -93,10 +95,12 @@ const getAlert = async (req, res) => {
     const data = await deService.alertProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 
@@ -107,10 +111,12 @@ const getArchStorie = async (req, res) => {
     const data = await deService.archStorieProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 
@@ -121,10 +127,12 @@ const getShipProgress = async (req, res) => {
     const data = await deService.constructionProgress(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 
@@ -135,10 +143,12 @@ const getInvasions = async (req, res) => {
     const data = await deService.invasionsProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 // FIXME 处理每日突击信息
@@ -148,10 +158,12 @@ const getSortie = async (req, res) => {
     const data = await deService.sortieProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error?.message || "Server error",
-    });
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
   }
 };
 
