@@ -153,11 +153,11 @@ async function alertProcess(data) {
     return Alerts;
   } catch (error) {
     // 错误处理
-    // console.error("处理警报数据时出错:", {
-    //   message: error.message,
-    //   stack: error.stack,
-    // });
-    // throw new Error("获取警报数据失败");
+    console.error("处理警报数据时出错:", {
+      message: error.message,
+      stack: error.stack,
+    });
+    throw new Error("获取警报数据失败");
   }
 }
 
@@ -215,14 +215,14 @@ async function archStorieProcess(data) {
     return ArchonHunt;
   } catch (err) {
     // 统一错误处理
-    // console.error("Failed to process ArchonHunt data:", {
-    //   message: err.message,
-    //   stack: err.stack,
-    //   data: data?.LiteSorties?.[0]
-    //     ? "Partial data available"
-    //     : "No valid sortie data",
-    // });
-    // throw new Error("Failed to get ArchonHunt data - see error details above");
+    console.error("Failed to process ArchonHunt data:", {
+      message: err.message,
+      stack: err.stack,
+      data: data?.LiteSorties?.[0]
+        ? "Partial data available"
+        : "No valid sortie data",
+    });
+    throw new Error("Failed to get ArchonHunt data - see error details above");
   }
 }
 
@@ -330,9 +330,70 @@ async function invasionsProcess(data) {
   }
 }
 
+// FIXME 处理每日突击
+async function sortieProcess(data) {
+  try {
+    // 使用 __dirname 构建绝对路径
+    const solNodesPath = path.join(
+      __dirname,
+      "../public/i18n/zh/solNodes.json"
+    );
+    const missionTypesPath = path.join(
+      __dirname,
+      "../public/i18n/zh/missionTypes.json"
+    );
+    const sortieDataPath = path.join(
+      __dirname,
+      "../public/i18n/zh/sortieData.json"
+    );
+
+    // 读取 JSON 文件
+    const [solNodesStr, missionTypesStr, sortieDataStr] = await Promise.all([
+      fs.readFile(solNodesPath, "utf8"),
+      fs.readFile(missionTypesPath, "utf8"),
+      fs.readFile(sortieDataPath, "utf8"),
+    ]);
+
+    const solNodes = JSON.parse(solNodesStr);
+    const missionTypes = JSON.parse(missionTypesStr);
+    const sortieData = JSON.parse(sortieDataStr);
+
+    const { modifierTypes } = sortieData;
+
+    // 确保数据存在
+    if (!data?.Sorties?.[0]) {
+      throw new Error("Invalid data format: Sorties is missing or empty");
+    }
+
+    const Sortie = {
+      activation: new Date(
+        Number(data.Sorties[0].Activation.$date.$numberLong)
+      ),
+      expiry: new Date(Number(data.Sorties[0].Expiry.$date.$numberLong)),
+      variants: data.Sorties[0].Variants.map((one) => {
+        return {
+          node: solNodes[one.node]?.value || one.node || "未知节点",
+          missionType:
+            missionTypes[one.missionType]?.value ||
+            one.missionType ||
+            "未知任务类型",
+          modifier:
+            modifierTypes[one.modifierType] || one.modifierType || "未知修正器",
+        };
+      }),
+    };
+
+    return Sortie;
+  } catch (err) {
+    console.error("Failed to load or process sortie data:", err);
+    throw new Error("Failed to get sortie data");
+  }
+}
+
 module.exports = {
   plainCycleProcess,
   alertProcess,
+  sortieProcess,
   invasionsProcess,
   archStorieProcess,
   constructionProgress,

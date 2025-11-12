@@ -141,6 +141,19 @@ const getInvasions = async (req, res) => {
     });
   }
 };
+// FIXME 处理每日突击信息
+const getSortie = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.sortieProcess(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Server error",
+    });
+  }
+};
 
 // 清理资源
 function clearCacheIntervals() {
@@ -162,6 +175,7 @@ startCacheMaintenance();
 module.exports = {
   getPlainCycle,
   getAlert,
+  getSortie,
   getShipProgress,
   getInvasions,
   getArchStorie,

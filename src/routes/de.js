@@ -24,9 +24,6 @@ const deController = require("../controllers/deController.js");
 // 赏金任务
 // router.get("/alerts/jobs", deController);
 
-// 获取每日突击
-// router.get("/sortie", deController);
-
 // 获取每日集团任务
 // router.get("/syndicates", deController.getAlerts);
 
@@ -38,5 +35,6 @@ router.get("/invasions", deController.getInvasions);
 router.get("/plain/cycles", deController.getPlainCycle);
 router.get("/archsortie", deController.getArchStorie);
 router.get("/alerts", deController.getAlert);
+router.get("/sortie", deController.getSortie);
 
 module.exports = router;

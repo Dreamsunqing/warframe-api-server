@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
         "/de/archsortie",
         "/de/invasions",
         "/de/shipprogress",
+        "/de/sortie",
       ],
     })
   );
