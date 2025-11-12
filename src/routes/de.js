@@ -35,15 +35,15 @@ router.get("/plain/cycles", deController.getPlainCycle);
 // 获取每周钢铁之路奖励(泰辛)
 // router.get("/stellrewad", deController.getAlerts);
 
-// 获取执行官周常
-// router.get("/archsortie", deController.getAlerts);
+// 获取获取执行官周常数据
+router.get("/archsortie", deController.getArchStorie);
 
 // 获取入侵任务
 // router.get("/invasions", deController.getAlerts);
 // 获取战舰建造进度
 // router.get("/shipprogress", deController.getAlerts);
 
-// 获取警报数据
-// router.get("/alerts", deController.getAlerts);
+// 获取警报数据;
+router.get("/alerts", deController.getAlert);
 
 module.exports = router;

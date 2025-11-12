@@ -1,6 +1,7 @@
 // Minimal Express server exposing only /de/plain/cycles
 const express = require("express");
 const deRoutes = require("./src/routes/de.js");
+const { success } = require("./src/utils/apiResponse.js");
 
 const app = express();
 app.use(express.json());
@@ -10,7 +11,11 @@ app.use("/de", deRoutes);
 
 // Root hint
 app.get("/", (req, res) => {
-  res.json({ ok: true, routes: ["/de/plain/cycles"] });
+  res.json(
+    success({
+      routes: ["/de/plain/cycles", "/de/alerts", "/de/archsortie"],
+    })
+  );
 });
 
 const PORT = process.env.PORT || 3000;

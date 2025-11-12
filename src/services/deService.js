@@ -1,6 +1,8 @@
 // FIXME 数据处理层（de）
 const CycleUtils = require("./deUtils/plainCycle.js");
 const utils = new CycleUtils();
+const fs = require("fs/promises");
+const path = require("path");
 
 //   循环的持续时间和状态
 const loopItems = {
@@ -90,4 +92,139 @@ async function plainCycleProcess(data) {
   return cycleItems;
 }
 
-module.exports = { plainCycleProcess };
+// FIXME 获取警报信息
+async function alertProcess(data) {
+  try {
+    // 加载本地化数据
+    const [solNodesStr, missionTypesStr, factionsStr] = await Promise.all([
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/solNodes.json"),
+        "utf8"
+      ),
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/missionTypes.json"),
+        "utf8"
+      ),
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/factionData.json"),
+        "utf8"
+      ),
+    ]);
+    const solNodes = JSON.parse(solNodesStr);
+    const missionTypes = JSON.parse(missionTypesStr);
+    const factionsData = JSON.parse(factionsStr);
+    // 获取原始数据
+    const art = Array.isArray(data?.Alerts) ? data.Alerts : [];
+    // 处理警报数据
+    const Alerts = [];
+    art.forEach((one) => {
+      Alerts.push({
+        node:
+          solNodes[one.MissionInfo.location]?.value ||
+          one.MissionInfo.location ||
+          "未知节点",
+        // 敌人等级
+        enemyLevel: `${one.MissionInfo.minEnemyLevel} - ${one.MissionInfo.maxEnemyLevel}`,
+        type:
+          missionTypes[one.MissionInfo.missionType]?.value ||
+          one.MissionInfo.missionType ||
+          "未知任务",
+        factions: factionsData[one.MissionInfo.faction].value,
+        activation: new Date(Number(one.Activation.$date.$numberLong)),
+        expiry: new Date(Number(one.Expiry.$date.$numberLong)),
+        // TODO 未来开发
+        rewards: one.MissionInfo.missionReward,
+        // other: [
+        //   one.MissionInfo.levelOverride,
+        //   one.MissionInfo.enemySpec,
+        //   one.MissionInfo.extraEnemySpec,
+        //   one.MissionInfo.descText,
+        //   one.MissionInfo.maxWaveNum,
+        //   one.Tag,
+        //   one.ForceUnlock,
+        // ],
+      });
+    });
+    if (Alerts.length === 0) {
+      return {
+        message: "没有可用的警报信息",
+      };
+    }
+    return Alerts;
+  } catch (error) {
+    // 4. 统一错误处理 --------------------------------------------------
+    // console.error("处理警报数据时出错:", {
+    //   message: error.message,
+    //   stack: error.stack,
+    // });
+    // throw new Error("获取警报数据失败");
+  }
+}
+
+// FIXME 获取执行官突击周常
+async function archStorieProcess(data) {
+  try {
+    // 1. 动态加载本地化数据 ------------------------------------------------
+    const [solNodesStr, missionTypeStr, bossesDataStr] = await Promise.all([
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/solNodes.json"),
+        "utf8"
+      ),
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/missionTypes.json"),
+        "utf8"
+      ),
+      fs.readFile(
+        path.join(__dirname, "../public/i18n/zh/sortieData.json"),
+        "utf8"
+      ),
+    ]);
+
+    const solNodes = JSON.parse(solNodesStr);
+    const missionType = JSON.parse(missionTypeStr);
+    const { archBosses } = JSON.parse(bossesDataStr);
+
+    // 2. 防御性数据验证 ---------------------------------------------------
+    if (!data?.LiteSorties?.[0]) {
+      throw new Error("Invalid data format: LiteSorties is missing or empty");
+    }
+
+    const liteSortie = data.LiteSorties[0];
+
+    // 3. 构建ArchonHunt对象 ----------------------------------------------
+    const ArchonHunt = {
+      // 时间处理
+      activation: new Date(Number(liteSortie.Activation.$date.$numberLong)),
+      expiry: new Date(Number(liteSortie.Expiry.$date.$numberLong)),
+
+      // Boss信息（带回退机制）
+      boss: archBosses[liteSortie.Boss]?.name || liteSortie.Boss || "未知Boss",
+      reward:
+        archBosses[liteSortie.Boss]?.reward || liteSortie.reward || "未知奖励",
+
+      // 任务列表处理
+      missions: liteSortie.Missions.map((one) => ({
+        node: solNodes[one.node]?.value || one.node || "未知节点",
+        type:
+          missionType[one.missionType]?.value ||
+          one.missionType ||
+          "未知任务类型",
+      })),
+    };
+
+    return ArchonHunt;
+  } catch (err) {
+    // 4. 统一错误处理 ---------------------------------------------------
+    console.error("Failed to process ArchonHunt data:", {
+      message: err.message,
+      stack: err.stack,
+      data: data?.LiteSorties?.[0]
+        ? "Partial data available"
+        : "No valid sortie data",
+    });
+
+    throw new Error("Failed to get ArchonHunt data - see error details above");
+  }
+}
+
+module.exports = { plainCycleProcess, alertProcess, archStorieProcess };

@@ -1,10 +1,30 @@
-// FIXME 统一响应格式
 class ApiResponse {
-  static success(data, message = "Success") {
-    return { success: true, data, message };
+  // 成功响应
+  static success(data, meta = {}) {
+    return {
+      time: new Date(Date.now()),
+      code: 200,
+      message: "Success",
+      data,
+      ...meta,
+    };
   }
 
-  static error(errorCode, message) {
-    return { success: false, errorCode, message };
+  // 错误响应（支持业务错误码）
+  static error(errorCode, message = "Error", meta = {}) {
+    return {
+      time: new Date(Date.now()),
+      code: 500,
+      errorCode, // 业务错误码（如: E1001）
+      message,
+      ...meta,
+    };
   }
 }
+
+// 导出两种调用方式
+module.exports = {
+  ApiResponse,
+  success: (data, meta) => ApiResponse.success(data, meta),
+  error: (code, msg, meta) => ApiResponse.error(code, msg, meta),
+};

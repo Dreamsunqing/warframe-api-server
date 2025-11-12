@@ -2,6 +2,7 @@ const deService = require("../services/deService.js");
 const { getDe } = require("../utils/getDe.js");
 const path = require("path");
 const fs = require("fs");
+const { success, error } = require("../utils/apiResponse.js");
 
 // 缓存策略参数
 const CACHE_DIR = path.resolve(__dirname, "../../src/cache");
@@ -77,7 +78,34 @@ const getPlainCycle = async (req, res) => {
   try {
     const warframeData = await ensureCache();
     const data = await deService.plainCycleProcess(warframeData);
-    res.json({ messages: "success", time: new Date(Date.now()), data });
+    res.json(success(data));
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Server error",
+    });
+  }
+};
+// FIXME 处理警报信息
+const getAlert = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.alertProcess(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Server error",
+    });
+  }
+};
+
+// FIXME 处理执行官周常信息
+const getArchStorie = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.archStorieProcess(warframeData);
+    res.json(success(data));
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -105,7 +133,8 @@ startCacheMaintenance();
 
 module.exports = {
   getPlainCycle,
-
+  getAlert,
+  getArchStorie,
   // 缓存维护
   refreshCache, // 手动刷新缓存
   saveCache, // 手动保存缓存文件
