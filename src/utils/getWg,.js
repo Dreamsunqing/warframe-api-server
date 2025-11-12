@@ -118,7 +118,10 @@ async function getwg() {
     }
     return output;
   } catch (error) {
+    new err();
     console.error("错误信息:", error.message);
+    // 抛出错误，让调用者处理
+    throw new Error("多次尝试后仍无法获取数据");
   } finally {
     // 关闭浏览器环境
     try {
