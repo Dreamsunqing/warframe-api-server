@@ -131,20 +131,3 @@ async function getwg() {
 }
 
 module.exports = { getwg };
-// 调试使用
-// (async () => {
-//   const a = await getwg();
-//   // 数据结构
-//   console.log(
-//     JSON.stringify(
-//       {
-//         status: "success",
-//         data: a,
-//         source: "minimal",
-//         timestamp: new Date().toISOString(),
-//       },
-//       null,
-//       2
-//     )
-//   );
-// })();

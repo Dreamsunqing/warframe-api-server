@@ -21,7 +21,7 @@ async function fetchWorldStateWithRetry(retries = 3) {
     return worldStateData;
   } catch (error) {
     console.error(
-      `获取 Warframe 世界状态失败（剩余重试次数：${retries - 1}）`,
+      `获取 Warframe 世界状态失败（剩余重试次数：${retries - 1}`,
       "错误信息：",
       error.message
     );
@@ -49,13 +49,6 @@ async function getDe() {
   }
   // 已加载则直接返回数据（同步）
   return worldStateData;
-  S;
 }
 
 module.exports = { getDe };
-// 调试用;
-// async function dev() {
-//   const a = await getDe();
-//   console.log(a);
-// }
-// dev();
