@@ -1,0 +1,116 @@
+{
+  "/lotus/types/items/research/chemcomponent": {
+    "value": "爆燃喷射器"
+  },
+  "/lotus/types/items/research/energycomponent": {
+    "value": "电磁力场装置"
+  },
+  "/lotus/types/items/research/biocomponent": {
+    "value": "突变原聚合物"
+  },
+  "/lotus/types/items/miscitems/infestedaladcoordinate": {
+    "value": "异融Alad V 导航坐标"
+  },
+  "/lotus/types/recipes/components/formablueprint": {
+    "value": "Forma 蓝图"
+  },
+  "/lotus/types/recipes/components/orokincatalystblueprint": {
+    "value": "Orokin 催化剂蓝图"
+  },
+  "/lotus/types/recipes/components/orokinreactorblueprint": {
+    "value": "Orokin 反应炉蓝图"
+  },
+  "/lotus/types/recipes/components/utilityunlockerblueprint": {
+    "value": "Warframe 特殊功能槽连接器 蓝图"
+  },
+  "/lotus/types/recipes/weapons/deravandalblueprint": {
+    "value": "德拉 破坏者 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/deravandalbarrel": {
+    "value": "德拉 破坏者 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/deravandalreceiver": {
+    "value": "德拉 破坏者 枪机"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/deravandalstock": {
+    "value": "德拉 破坏者 枪管"
+  },
+  "/lotus/types/recipes/weapons/grineercombatknifeprint": {
+    "value": "希芙 蓝图"
+  },
+  "/lotus/types/recipes/weapons/grineercombatknifesortieblueprint": {
+    "value": "希芙 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/grineercombatknifeblade": {
+    "value": "希芙 刀刃"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/grineercombatknifehandle": {
+    "value": "希芙 握柄"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/grineercombatknifeheatsink": {
+    "value": "希芙 散热器"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/grineercombatknifehilt": {
+    "value": "希芙 握柄"
+  },
+  "/lotus/types/recipes/weapons/karakwraithblueprint": {
+    "value": "卡拉克 亡魂 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/karakwraithbarrel": {
+    "value": "卡拉克 亡魂 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/karakwraithreceiver": {
+    "value": "卡拉克 亡魂 枪机"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/karakwraithstock": {
+    "value": "卡拉克 亡魂 枪托"
+  },
+  "/lotus/types/recipes/weapons/latronwraithblueprint": {
+    "value": "拉特昂 亡魂 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/latronwraithbarrel": {
+    "value": "拉特昂 亡魂 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/latronwraithreceiver": {
+    "value": "拉特昂 亡魂 枪机"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/latronwraithstock": {
+    "value": "拉特昂 亡魂 枪托"
+  },
+  "/lotus/types/recipes/weapons/snipetronvandalblueprint": {
+    "value": "狙击特昂 破坏者 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/snipetronvandalbarrel": {
+    "value": "狙击特昂 破坏者 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/snipetronvandalreceiver": {
+    "value": "狙击特昂 破坏者 枪机"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/snipetronvandalstock": {
+    "value": "狙击特昂 破坏者 枪托"
+  },
+  "/lotus/types/recipes/weapons/strunwraithblueprint": {
+    "value": "斯特朗 亡魂 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/strunwraithbarrel": {
+    "value": "斯特朗 亡魂 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/strunwraithreceiver": {
+    "value": "斯特朗 亡魂 枪机"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/strunwraithstock": {
+    "value": "斯特朗 亡魂 枪托"
+  },
+  "/lotus/types/recipes/weapons/twinviperswraithblueprint": {
+    "value": "双子蝰蛇 亡魂 蓝图"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/twinviperswraithbarrel": {
+    "value": "双子蝰蛇 亡魂 枪管"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/twinviperswraithlink": {
+    "value": "双子蝰蛇 亡魂 连接器"
+  },
+  "/lotus/types/recipes/weapons/weaponparts/twinviperswraithreceiver": {
+    "value": "双子蝰蛇 亡魂 枪机"
+  }
+}

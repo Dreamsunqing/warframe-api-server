@@ -72,7 +72,7 @@ async function ensureCache() {
   return cachedDeData;
 }
 
-// FIXME 控制器函数
+// FIXME 控制器函数（de）
 // FIXME 处理循环信息
 const getPlainCycle = async (req, res) => {
   try {
@@ -114,6 +114,34 @@ const getArchStorie = async (req, res) => {
   }
 };
 
+// FIXME 处理战舰建造进度信息
+const getShipProgress = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.constructionProgress(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Server error",
+    });
+  }
+};
+
+// FIXME 处理入侵数据
+const getInvasions = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.invasionsProcess(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error?.message || "Server error",
+    });
+  }
+};
+
 // 清理资源
 function clearCacheIntervals() {
   if (cacheInterval) clearInterval(cacheInterval);
@@ -134,6 +162,8 @@ startCacheMaintenance();
 module.exports = {
   getPlainCycle,
   getAlert,
+  getShipProgress,
+  getInvasions,
   getArchStorie,
   // 缓存维护
   refreshCache, // 手动刷新缓存

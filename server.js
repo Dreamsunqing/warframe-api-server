@@ -13,7 +13,13 @@ app.use("/de", deRoutes);
 app.get("/", (req, res) => {
   res.json(
     success({
-      routes: ["/de/plain/cycles", "/de/alerts", "/de/archsortie"],
+      routes: [
+        "/de/plain/cycles",
+        "/de/alerts",
+        "/de/archsortie",
+        "/de/invasions",
+        "/de/shipprogress",
+      ],
     })
   );
 });

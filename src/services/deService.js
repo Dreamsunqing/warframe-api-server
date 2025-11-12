@@ -92,7 +92,7 @@ async function plainCycleProcess(data) {
   return cycleItems;
 }
 
-// FIXME 获取警报信息
+// FIXME 获取警报
 async function alertProcess(data) {
   try {
     // 加载本地化数据
@@ -132,7 +132,7 @@ async function alertProcess(data) {
         factions: factionsData[one.MissionInfo.faction].value,
         activation: new Date(Number(one.Activation.$date.$numberLong)),
         expiry: new Date(Number(one.Expiry.$date.$numberLong)),
-        // TODO 未来开发
+        // TODO 警报奖励未来开发
         rewards: one.MissionInfo.missionReward,
         // other: [
         //   one.MissionInfo.levelOverride,
@@ -152,7 +152,7 @@ async function alertProcess(data) {
     }
     return Alerts;
   } catch (error) {
-    // 4. 统一错误处理 --------------------------------------------------
+    // 错误处理
     // console.error("处理警报数据时出错:", {
     //   message: error.message,
     //   stack: error.stack,
@@ -164,7 +164,7 @@ async function alertProcess(data) {
 // FIXME 获取执行官突击周常
 async function archStorieProcess(data) {
   try {
-    // 1. 动态加载本地化数据 ------------------------------------------------
+    // 加载本地数据
     const [solNodesStr, missionTypeStr, bossesDataStr] = await Promise.all([
       fs.readFile(
         path.join(__dirname, "../public/i18n/zh/solNodes.json"),
@@ -184,14 +184,14 @@ async function archStorieProcess(data) {
     const missionType = JSON.parse(missionTypeStr);
     const { archBosses } = JSON.parse(bossesDataStr);
 
-    // 2. 防御性数据验证 ---------------------------------------------------
+    // 防御性数据验证
     if (!data?.LiteSorties?.[0]) {
       throw new Error("Invalid data format: LiteSorties is missing or empty");
     }
 
     const liteSortie = data.LiteSorties[0];
 
-    // 3. 构建ArchonHunt对象 ----------------------------------------------
+    // 构建ArchonHunt对象
     const ArchonHunt = {
       // 时间处理
       activation: new Date(Number(liteSortie.Activation.$date.$numberLong)),
@@ -214,17 +214,126 @@ async function archStorieProcess(data) {
 
     return ArchonHunt;
   } catch (err) {
-    // 4. 统一错误处理 ---------------------------------------------------
-    console.error("Failed to process ArchonHunt data:", {
-      message: err.message,
-      stack: err.stack,
-      data: data?.LiteSorties?.[0]
-        ? "Partial data available"
-        : "No valid sortie data",
-    });
-
-    throw new Error("Failed to get ArchonHunt data - see error details above");
+    // 统一错误处理
+    // console.error("Failed to process ArchonHunt data:", {
+    //   message: err.message,
+    //   stack: err.stack,
+    //   data: data?.LiteSorties?.[0]
+    //     ? "Partial data available"
+    //     : "No valid sortie data",
+    // });
+    // throw new Error("Failed to get ArchonHunt data - see error details above");
   }
 }
 
-module.exports = { plainCycleProcess, alertProcess, archStorieProcess };
+// FIXME 获取战舰建造进度
+async function constructionProgress(data) {
+  try {
+    // 防御性数据验证
+    if (!data?.ProjectPct || data.ProjectPct.length !== 2) {
+      throw new Error("提示：战舰可能正在进攻您的中继站");
+    }
+  } catch (err) {
+    // 统一错误处理
+  }
+
+  const Progress = {
+    fomorian: Math.min(data.ProjectPct[0], 100).toFixed(2),
+    fomorianName: "巨人战舰",
+    razorback: Math.min(data.ProjectPct[1], 100).toFixed(2),
+    razorbackName: "利刃豺狼舰队",
+  };
+  return Progress;
+}
+//  处理入侵奖励
+function invasionsReward(value, itemUniqueName) {
+  // 增加 itemUniqueName 参数传递
+  if (!value || !value.countedItems) return "";
+  const rewardList = value.countedItems.map((one) => {
+    one.ItemType = one.ItemType.toLowerCase();
+    if (!itemUniqueName[one.ItemType]) {
+      console.log(`未找到物品: ${one.ItemType}`);
+    }
+
+    const name = itemUniqueName[one.ItemType]?.value || one.ItemType;
+    return `${one.ItemCount} ${name}`;
+  });
+  return rewardList.join(" + ");
+}
+
+// FIXME 获取入侵数据
+async function invasionsProcess(data) {
+  try {
+    //  加载 JSON 文件
+    const solNodesPath = path.join(
+      __dirname,
+      "../public/i18n/zh/solNodes.json"
+    );
+    const factionsDataPath = path.join(
+      __dirname,
+      "../public/i18n/zh/factionData.json"
+    );
+    const itemsDataPath = path.join(
+      __dirname,
+      "../public/i18n/zh/itemsData.json"
+    ); // 假设物品数据也放在JSON文件中
+
+    // 并行读取所有文件
+    const [solNodesStr, factionsDataStr, itemsDataStr] = await Promise.all([
+      fs.readFile(solNodesPath, "utf8"),
+      fs.readFile(factionsDataPath, "utf8"),
+      fs.readFile(itemsDataPath, "utf8"),
+    ]);
+
+    // 解析JSON数据
+    const solNodes = JSON.parse(solNodesStr);
+    const factionsData = JSON.parse(factionsDataStr);
+    const itemUniqueName = JSON.parse(itemsDataStr); // 物品数据
+
+    // 2. 处理入侵数据
+    const invasions = [];
+
+    if (!data?.Invasions || !Array.isArray(data.Invasions)) {
+      throw new Error(
+        "Invalid data format: Invasions is missing or not an array"
+      );
+    }
+
+    data.Invasions.forEach((one) => {
+      // 排除已结束的
+      if (one.Completed) return;
+
+      invasions.push({
+        node: solNodes[one.Node]?.value || one.Node || "未知节点",
+        completion: (((one.Count + one.Goal) / (one.Goal * 2)) * 100).toFixed(
+          2
+        ),
+        attacker: {
+          faction:
+            factionsData[one.Faction]?.value || one.Faction || "未知阵营",
+          reward: invasionsReward(one.AttackerReward, itemUniqueName), // 传递物品数据
+        },
+        defender: {
+          faction:
+            factionsData[one.DefenderFaction]?.value ||
+            one.DefenderFaction ||
+            "未知阵营",
+          reward: invasionsReward(one.DefenderReward, itemUniqueName), // 传递物品数据
+        },
+      });
+    });
+
+    return invasions;
+  } catch (error) {
+    console.error("处理入侵数据时出错:", error);
+    throw new Error("Failed to process invasions data");
+  }
+}
+
+module.exports = {
+  plainCycleProcess,
+  alertProcess,
+  invasionsProcess,
+  archStorieProcess,
+  constructionProgress,
+};

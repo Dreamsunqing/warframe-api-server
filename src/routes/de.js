@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const deController = require("../controllers/deController.js");
 
-// TODO 接口分组
+// TODO 接口分组（de）
 // 获取所有数据
 // router.get("/all", deController.getAllData);
 
@@ -21,8 +21,6 @@ const deController = require("../controllers/deController.js");
 
 // 获取平原数据
 // router.get("/plain", deController);
-// 循环状态
-router.get("/plain/cycles", deController.getPlainCycle);
 // 赏金任务
 // router.get("/alerts/jobs", deController);
 
@@ -35,15 +33,10 @@ router.get("/plain/cycles", deController.getPlainCycle);
 // 获取每周钢铁之路奖励(泰辛)
 // router.get("/stellrewad", deController.getAlerts);
 
-// 获取获取执行官周常数据
+router.get("/shipprogress", deController.getShipProgress);
+router.get("/invasions", deController.getInvasions);
+router.get("/plain/cycles", deController.getPlainCycle);
 router.get("/archsortie", deController.getArchStorie);
-
-// 获取入侵任务
-// router.get("/invasions", deController.getAlerts);
-// 获取战舰建造进度
-// router.get("/shipprogress", deController.getAlerts);
-
-// 获取警报数据;
 router.get("/alerts", deController.getAlert);
 
 module.exports = router;

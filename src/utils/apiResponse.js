@@ -1,3 +1,4 @@
+// FIXME 统一API响应格式
 class ApiResponse {
   // 成功响应
   static success(data, meta = {}) {

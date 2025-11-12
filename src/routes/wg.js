@@ -1,9 +1,9 @@
-// FIXME 路由组织（wegame）
+// FIXME 路由组织（we）
 const express = require("express");
 const router = express.Router();
 const deController = require("../controllers/wgController.js");
 
-// TODO 接口分组
+// TODO 接口分组（wg）
 // 获取所有数据
 router.get("/all", deController.getAllData);
 
