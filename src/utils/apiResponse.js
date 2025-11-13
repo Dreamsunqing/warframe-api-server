@@ -16,7 +16,7 @@ class ApiResponse {
     return {
       time: new Date(Date.now()),
       code: 500,
-      errorCode, // 业务错误码（如: E1001）
+      errorCode,
       message,
       ...meta,
     };
