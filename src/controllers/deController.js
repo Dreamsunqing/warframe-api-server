@@ -167,6 +167,22 @@ const getSortie = async (req, res) => {
   }
 };
 
+// FIXME 处理每周钢铁之路奖励
+const getStellPathreward = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.stellPathrewardProcess(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
+  }
+};
+
 // 清理资源
 function clearCacheIntervals() {
   if (cacheInterval) clearInterval(cacheInterval);
@@ -191,6 +207,7 @@ module.exports = {
   getShipProgress,
   getInvasions,
   getArchStorie,
+  getStellPathreward,
   // 缓存维护
   refreshCache, // 手动刷新缓存
   saveCache, // 手动保存缓存文件

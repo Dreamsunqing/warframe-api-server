@@ -36,5 +36,6 @@ router.get("/plain/cycles", deController.getPlainCycle);
 router.get("/archsortie", deController.getArchStorie);
 router.get("/alerts", deController.getAlert);
 router.get("/sortie", deController.getSortie);
+router.get("/stellrewad", deController.getStellPathreward);
 
 module.exports = router;

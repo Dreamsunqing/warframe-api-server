@@ -1,8 +1,6 @@
 // FIXME 数据处理层（de）
 const CycleUtils = require("./deUtils/plainCycle.js");
 const utils = new CycleUtils();
-const fs = require("fs/promises");
-const path = require("path");
 
 const I18nService = require("../services/i18nService");
 // FIXME 获取可重用语言数据(默认中文)
@@ -322,10 +320,38 @@ async function sortieProcess(data, lang = "zh") {
   }
 }
 
+// FIXME 处理每周钢铁之路奖励
+async function stellPathrewardProcess() {
+  const steelPath = (() => {
+    const loopList = [
+      { name: "Umbra Forma 蓝图", cost: 150, duration: 604800000 },
+      { name: "50,000 赤毒", cost: 55, duration: 604800000 },
+      { name: "组合枪裂罅 Mod", cost: 75, duration: 604800000 },
+      { name: "3x Forma", cost: 75, duration: 604800000 },
+      { name: "Zaw 裂罅 Mod", cost: 75, duration: 604800000 },
+      { name: "30,000 内融核心", cost: 150, duration: 604800000 },
+      { name: "步枪裂罅 Mod", cost: 75, duration: 604800000 },
+      { name: "霰弹枪裂罅 Mod", cost: 75, duration: 604800000 },
+    ];
+    const startTime = utils.calcCycleStartTime(loopList, 1745798400000);
+    const currentInfo = utils.plainCycleInfo(loopList, startTime);
+    return {
+      activation: new Date(currentInfo.activation),
+      expiry: new Date(currentInfo.expiry),
+      currentReward: {
+        name: currentInfo.name,
+        cost: currentInfo.cost,
+      },
+    };
+  })();
+  return steelPath;
+}
+
 module.exports = {
   plainCycleProcess,
   alertProcess,
   sortieProcess,
+  stellPathrewardProcess,
   invasionsProcess,
   archStorieProcess,
   constructionProgress,
