@@ -3,6 +3,7 @@ const CycleUtils = require("./deUtils/plainCycle.js");
 const utils = new CycleUtils();
 
 const I18nService = require("../services/i18nService");
+const e = require("express");
 // FIXME 获取可重用语言数据(默认中文)
 const getLocalizedData = async (lang = "zh") => {
   const i18n = new I18nService(lang);
@@ -444,11 +445,78 @@ async function stellPathrewardProcess() {
   return steelPath;
 }
 
+// FIXME 处理实时裂隙任务数据
+async function fissureProcess(data, lang = "zh") {
+  try {
+    // 加载本地化数据
+    const localizedData = await getLocalizedData(lang);
+    const { solNodes, missionTypes, fissureLevel } = localizedData;
+
+    const fissures = [];
+    // 处理普通和钢铁图
+    data.ActiveMissions.forEach((one) => {
+      fissures.push({
+        activation: new Date(Number(one.Activation.$date.$numberLong)),
+        expiry: new Date(Number(one.Expiry.$date.$numberLong)),
+        node: solNodes[one.Node]?.value || one.Node,
+        missionType: missionTypes[one.MissionType]?.value || one.MissionType,
+        faction: solNodes[one.Node]?.enemy || "未知",
+        tier: fissureLevel[one.Modifier]?.value || one.Modifier,
+        tierNum: fissureLevel[one.Modifier]?.num || one.Modifier,
+        isStorm: false,
+        isHard: Boolean(one.Hard),
+      });
+    });
+    // 处理九重天风暴图
+    data.VoidStorms.forEach((one) => {
+      fissures.push({
+        activation: new Date(Number(one.Activation.$date.$numberLong)),
+        expiry: new Date(Number(one.Expiry.$date.$numberLong)),
+        node: solNodes[one.Node]?.value || one.Node,
+        missionType: solNodes[one.Node]?.type || one.Node,
+        faction: solNodes[one.Node]?.enemy || "未知",
+        tier:
+          fissureLevel[one.ActiveMissionTier]?.value || one.ActiveMissionTier,
+        tierNum:
+          fissureLevel[one.ActiveMissionTier]?.num || one.ActiveMissionTier,
+        isStorm: true,
+        isHard: false,
+      });
+    });
+
+    // 排序
+    fissures.sort((a, b) => {
+      const numA = [0, 0, 0];
+      const numB = [0, 0, 0];
+      if (a.isStorm) numA[0] = 1;
+      if (b.isStorm) numB[0] = 1;
+      if (a.isHard) numA[1] = 1;
+      if (b.isHard) numB[1] = 1;
+      numA[2] = a.tierNum;
+      numB[2] = b.tierNum;
+      //   计算权重
+      const resultA = 100 * numA[0] + 10 * numA[1] + numA[2];
+      const resultB = 100 * numB[0] + 10 * numB[1] + numB[2];
+      return resultA - resultB;
+    });
+
+    return fissures;
+  } catch (error) {
+    // 统一错误处理
+    console.error("处理裂缝任务数据时出错:", {
+      message: error.message,
+      stack: error.stack,
+    });
+    throw new Error("获取裂缝任务数据失败");
+  }
+}
+
 module.exports = {
   plainCycleProcess,
   alertProcess,
   sortieProcess,
   stellPathrewardProcess,
+  fissureProcess,
   invasionsProcess,
   archStorieProcess,
   constructionProgress,

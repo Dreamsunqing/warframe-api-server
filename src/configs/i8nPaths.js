@@ -26,4 +26,8 @@ module.exports = (lang = "zh") => [
     key: "itemsData",
     relPath: `../public/i18n/${lang}/itemsData.json`,
   },
+  {
+    key: "fissureLevel",
+    relPath: `../public/i18n/${lang}/fissureLevel.json`,
+  },
 ];

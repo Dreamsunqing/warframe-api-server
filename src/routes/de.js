@@ -37,5 +37,5 @@ router.get("/archsortie", deController.getArchStorie);
 router.get("/alerts", deController.getAlert);
 router.get("/sortie", deController.getSortie);
 router.get("/stellrewad", deController.getStellPathreward);
-
+router.get("/fissures", deController.getFissures);
 module.exports = router;

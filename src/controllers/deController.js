@@ -174,12 +174,18 @@ const getStellPathreward = async (req, res) => {
     const data = await deService.stellPathrewardProcess(warframeData);
     res.json(success(data));
   } catch (error) {
-    res.json(
-      error({
-        success: false,
-        message: error?.message || "Server error",
-      })
-    );
+    res.json(error());
+  }
+};
+
+// FIXME 处理裂缝任务信息
+const getFissures = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = await deService.fissureProcess(warframeData);
+    res.json(success(data));
+  } catch (error) {
+    res.json(error());
   }
 };
 
@@ -208,6 +214,7 @@ module.exports = {
   getInvasions,
   getArchStorie,
   getStellPathreward,
+  getFissures,
   // 缓存维护
   refreshCache, // 手动刷新缓存
   saveCache, // 手动保存缓存文件
