@@ -38,6 +38,17 @@ const wgController = {
       );
     }
   },
+  getSortie: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const sortie = await wgService.getSortie(data);
+      res.json(success(sortie));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护

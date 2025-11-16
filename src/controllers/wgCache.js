@@ -104,6 +104,7 @@ async function buildProcessedCache() {
     return {
       events: await wgService.getEvents(data),
       alerts: await wgService.getAlerts(data),
+      sortie: await wgService.getSortie(data),
     };
   } catch (err) {
     console.error("[wgCache]构建处理后缓存失败:", err);

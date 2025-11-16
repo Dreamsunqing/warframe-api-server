@@ -43,6 +43,8 @@ async function getAlerts(data) {
     if (item.mission) {
       item.mission.reward.countedItems.forEach((item) =>
         rewardItems.push({
+          // 奖励物品类型
+          // FIXME 这里会出现未翻译的物品名称type
           type: item.type,
           count: item.count,
         })
@@ -64,7 +66,30 @@ async function getAlerts(data) {
   return alerts;
 }
 
+async function getSortie(data) {
+  const sortieMissions = [];
+  data.data.sortie.variants.forEach((item, index) =>
+    sortieMissions.push({
+      index: index,
+      node: item.node,
+      missionType: item.missionType,
+      modifier: item.modifier,
+      modifierDesc: item.modifierDescription,
+    })
+  );
+  const sortie = {
+    activation: data.data.sortie.activation,
+    expiry: data.data.sortie.expiry,
+    boss: data.data.sortie.boss,
+    faction: data.data.sortie.faction,
+    sortieMissions: sortieMissions,
+  };
+
+  return sortie;
+}
+
 module.exports = {
   getEvents,
   getAlerts,
+  getSortie,
 };
