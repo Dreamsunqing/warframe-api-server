@@ -49,6 +49,17 @@ const wgController = {
       );
     }
   },
+  getPlainJobs: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const plainJobs = await wgService.getPlainJobs(data);
+      res.json(success(plainJobs));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护

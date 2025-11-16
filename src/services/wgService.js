@@ -88,8 +88,35 @@ async function getSortie(data) {
   return sortie;
 }
 
+async function getPlainJobs(data) {
+  const plainJobs = [];
+  data.data.syndicateMissions.forEach((item) => {
+    const jobs = [];
+    if (item.jobs) {
+      item.jobs.forEach((job) =>
+        jobs.push({
+          jobName: job.enemyLevels[0] !== 100 ? job.type : job.type + " 钢铁",
+          level: job.enemyLevels[0] + "-" + job.enemyLevels[1],
+          count: job.standingStages,
+        })
+      );
+    }
+    // TODO 过滤掉没有赏金的集团（目前只有3大平原咯，圣所1999尚未找到）
+    if (jobs.length > 0) {
+      plainJobs.push({
+        plainName: item.syndicate,
+        activation: item.activation,
+        expiry: item.expiry,
+        jobs: jobs,
+      });
+    }
+  });
+  return plainJobs;
+}
+
 module.exports = {
   getEvents,
   getAlerts,
   getSortie,
+  getPlainJobs,
 };
