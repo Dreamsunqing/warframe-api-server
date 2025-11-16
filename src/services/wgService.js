@@ -1,5 +1,9 @@
 // FIXME 数据处理层 （wg）
 
+const {
+  combineLatest,
+} = require("puppeteer-core/lib/esm/third_party/rxjs/rxjs.js");
+
 async function getEvents(data) {
   const hort = [
     {
@@ -114,9 +118,59 @@ async function getPlainJobs(data) {
   return plainJobs;
 }
 
+async function getFissures(data) {
+  const fissures = [];
+  data.data.fissures.forEach((item) => {
+    const match = String(item.tierNum).match(/(\d)(?!.*\d)/);
+    let tier = match ? Number(match[1]) : Number(item.tierNum);
+    let tierName = "";
+    if (tier === 1) {
+      tierName = "古纪";
+    } else if (tier === 2) {
+      tierName = "前纪";
+    } else if (tier === 3) {
+      tierName = "中纪";
+    } else if (tier === 4) {
+      tierName = "后纪";
+    } else if (tier === 5) {
+      tierName = "安魂";
+    } else if (tier === 6) {
+      tierName = "全能";
+    }
+    fissures.push({
+      activation: item.activation,
+      expiry: item.expiry,
+      tier: tier,
+      tierName: tierName,
+      node: item.node,
+      type: item.missionType,
+      faction: item.enemy,
+      isHard: item.isHard,
+      isStorm: item.isStorm,
+    });
+  });
+  // TODO 映射 node faction 到 中文，从 i18n 中读取 solNodes.json
+  const solNodes = require("../public/i18n/CH/solNodes.json");
+  fissures.forEach((item) => {
+    item.node = solNodes[item.node]?.value || item.node;
+    item.faction = solNodes[item.faction]?.enemy || item.faction;
+    item.type = solNodes[item.type]?.type || item.type;
+  });
+
+  // TODO 排序，根据tier从低到高
+  fissures.sort((a, b) => {
+    if (a.tier !== b.tier) {
+      return a.tier - b.tier;
+    }
+  });
+
+  return fissures;
+}
+
 module.exports = {
   getEvents,
   getAlerts,
   getSortie,
   getPlainJobs,
+  getFissures,
 };

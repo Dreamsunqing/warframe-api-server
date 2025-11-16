@@ -8,4 +8,5 @@ router.get("/events", wgController.getEvents);
 router.get("/alerts", wgController.getAlerts);
 router.get("/sortie", wgController.getSortie);
 router.get("/plainJobs", wgController.getPlainJobs);
+router.get("/fissures", wgController.getFissures);
 module.exports = router;

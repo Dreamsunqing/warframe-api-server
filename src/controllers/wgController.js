@@ -60,6 +60,17 @@ const wgController = {
       );
     }
   },
+  getFissures: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const fissures = await wgService.getFissures(data);
+      res.json(success(fissures));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护
