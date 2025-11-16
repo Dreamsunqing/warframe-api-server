@@ -1,19 +1,19 @@
-// TODO deCache.js
+// TODO wgCache.js
 const path = require("path");
 const fs = require("fs");
-const { getDe } = require("../utils/getDe.js");
-const deService = require("../services/deService.js");
+const { getwg } = require("../utils/getWg.js");
+const wgService = require("../services/wgService.js");
 
 // FIXME Function：refreshCache
 // 参数：无:void
 // 返回值：Promise:refreshCache
-// 功能：刷新缓存数据，拉取最新的国际服数据
+// 功能：刷新国服缓存数据（原始）
 // 错误处理：捕获并记录错误，不抛出以保护调用方
-let cachedDeData = null;
+let cachedWgData = null;
 let cacheInitialized = false;
 let cacheLock = false;
 
-const CACHE_DIR = path.resolve(__dirname, "../../src/cache/de");
+const CACHE_DIR = path.resolve(__dirname, "../../src/cache/wg");
 const CACHE_REFRESH_INTERVAL = 60_000;
 const CACHE_SAVE_INTERVAL = 60_000;
 
@@ -25,11 +25,11 @@ async function refreshCache() {
   if (cacheLock) return;
   cacheLock = true;
   try {
-    const newData = await getDe();
-    cachedDeData = newData;
+    const newData = await getwg();
+    cachedWgData = newData;
     cacheInitialized = true;
   } catch (error) {
-    console.error("Cache refresh failed:", error);
+    console.error("[wgCache]Cache refresh failed:", error);
   } finally {
     cacheLock = false;
   }
@@ -38,31 +38,30 @@ async function refreshCache() {
 // FIXME Function：saveCache
 // 参数：无:void
 // 返回值：Promise:saveCache
-// 功能：将当前缓存写入磁盘文件
+// 功能：将当前国服缓存写入磁盘文件（原始+处理）
 // 错误处理：捕获并记录错误
 async function saveCache() {
-  if (!cachedDeData) return;
+  if (!cachedWgData) return;
   try {
     const oldFiles = fs.readdirSync(CACHE_DIR);
     oldFiles.forEach((file) => {
       fs.unlinkSync(path.join(CACHE_DIR, file));
     });
-    console.log(`[deCache]已删除旧缓存文件: ${oldFiles.join(", ")}`);
+    console.log(`[wgCache]已删除旧缓存文件: ${oldFiles.join(", ")}`);
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    const rawPath = path.join(CACHE_DIR, `decache-${timestamp}.json`);
-    await fs.promises.writeFile(rawPath, JSON.stringify(cachedDeData));
-    console.log(`[deCache]缓存已保存(原始): ${rawPath}`);
+    const rawPath = path.join(CACHE_DIR, `wgcache-${timestamp}.json`);
+    await fs.promises.writeFile(rawPath, JSON.stringify(cachedWgData));
+    console.log(`[wgCache]缓存已保存(原始): ${rawPath}`);
 
-    // 构建并保存处理过的数据
     const processed = await buildProcessedCache();
     const processedPath = path.join(
       CACHE_DIR,
-      `decache-processed-${timestamp}.json`
+      `wgcache-processed-${timestamp}.json`
     );
     await fs.promises.writeFile(processedPath, JSON.stringify(processed));
-    console.log(`[deCache]缓存已保存(处理过的): ${processedPath}`);
+    console.log(`[wgCache]缓存已保存(处理过的): ${processedPath}`);
   } catch (error) {
-    console.error("Cache save failed:", error);
+    console.error("[wgCache]Cache save failed:", error);
   }
 }
 
@@ -72,7 +71,7 @@ let saveInterval = null;
 // FIXME Function：startCacheMaintenance
 // 参数：无:void
 // 返回值：void:startCacheMaintenance
-// 功能：启动定时刷新与保存任务
+// 功能：启动国服缓存的定时刷新与保存
 // 错误处理：无
 function startCacheMaintenance() {
   if (cacheInterval) clearInterval(cacheInterval);
@@ -85,36 +84,29 @@ function startCacheMaintenance() {
 // FIXME Function：ensureCache
 // 参数：无:void
 // 返回值：Promise:any
-// 功能：确保缓存已初始化并返回缓存数据
+// 功能：确保国服缓存已初始化并返回缓存数据
 // 错误处理：错误在内部被处理并记录
 async function ensureCache() {
-  if (!cacheInitialized || !cachedDeData) {
+  if (!cacheInitialized || !cachedWgData) {
     await refreshCache();
   }
-  return cachedDeData;
+  return cachedWgData;
 }
 
 // FIXME Function：buildProcessedCache
 // 参数：无:void
 // 返回值：Promise:any
-// 功能：基于原始缓存构建处理过的数据用于缓存
-// 错误处理：函数内捕获处理错误抛出供上层记录
+// 功能：基于原始国服缓存构建处理过的数据（事件/警报）
+// 错误处理：内部记录错误并抛出
 async function buildProcessedCache() {
   try {
-    const data = cachedDeData;
+    const data = await ensureCache();
     return {
-      // TODO 新增数据在此添加
-      plainCycles: await deService.plainCycleProcess(data, "zh"),
-      alerts: await deService.alertProcess(data, "zh"),
-      archonHunt: await deService.archStorieProcess(data, "zh"),
-      shipProgress: await deService.constructionProgress(data),
-      invasions: await deService.invasionsProcess(data, "zh"),
-      sortie: await deService.sortieProcess(data, "zh"),
-      steelPathReward: await deService.stellPathrewardProcess(),
-      fissures: await deService.fissureProcess(data, "zh"),
+      events: await wgService.getEvents(data),
+      alerts: await wgService.getAlerts(data),
     };
   } catch (err) {
-    console.error("构建处理后缓存失败:", err);
+    console.error("[wgCache]构建处理后缓存失败:", err);
     throw err;
   }
 }

@@ -1,10 +1,47 @@
-const { getwg } = require("../utils/getWg.js");
 const { success, error } = require("../utils/apiResponse.js");
+const wgCache = require("./wgCache.js");
+const wgService = require("../services/wgService.js");
+const ensureCache = wgCache.ensureCache;
+const startCacheMaintenance = wgCache.startCacheMaintenance;
+const registerProcessSignals = wgCache.registerProcessSignals;
 
 const wgController = {
   getAll: async (req, res) => {
-    const data = await getwg();
-    res.json(success(data.data));
+    try {
+      const data = await ensureCache();
+      res.json(success(data.data));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
+  getEvents: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const events = await wgService.getEvents(data);
+      res.json(success(events));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
+  getAlerts: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const alerts = await wgService.getAlerts(data);
+      res.json(success(alerts));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
   },
 };
+
+// 初始化缓存维护
+startCacheMaintenance();
+registerProcessSignals();
+
 module.exports = wgController;

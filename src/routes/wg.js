@@ -4,4 +4,5 @@ const router = express.Router();
 const wgController = require("../controllers/wgController.js");
 
 router.get("/all", wgController.getAll);
+router.get("/events", wgController.getEvents);
 module.exports = router;
