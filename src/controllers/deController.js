@@ -4,6 +4,8 @@ const deCache = require("./deCache.js");
 const ensureCache = deCache.ensureCache;
 const startCacheMaintenance = deCache.startCacheMaintenance;
 const registerProcessSignals = deCache.registerProcessSignals;
+const path = require("path");
+const fs = require("fs");
 
 // 缓存模块已抽离至 controllers/deCache.js
 
@@ -124,6 +126,32 @@ const getFissures = async (req, res) => {
   }
 };
 
+// FIXME 获取未处理过的数据缓存
+const getALl = async (req, res) => {
+  try {
+    const warframeData = await ensureCache();
+    const data = warframeData;
+    res.json(success(data));
+  } catch (error) {
+    res.json(error());
+  }
+};
+
+// FIXME 获取处理过的数据缓存
+const getProcessedCache = async (req, res) => {
+  try {
+    const processedData = await deCache.getProcessedCache();
+    res.json(success(processedData));
+  } catch (error) {
+    res.json(
+      error({
+        success: false,
+        message: error?.message || "Server error",
+      })
+    );
+  }
+};
+
 // 初始化缓存维护
 startCacheMaintenance();
 registerProcessSignals();
@@ -137,6 +165,8 @@ module.exports = {
   getArchStorie,
   getStellPathreward,
   getFissures,
+  getALl,
+  getProcessedCache,
   // 缓存维护
   refreshCache: deCache.refreshCache, // 手动刷新缓存
   saveCache: deCache.saveCache, // 手动保存缓存文件

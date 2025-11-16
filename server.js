@@ -12,6 +12,8 @@ app.get("/", (req, res) => {
     message: "Welcome to the Warframe Status API",
     routes: {
       de: {
+        "/de/all": "获取 国际服原始数据 信息",
+        "/de/all/process": "获取 国际服处理过的数据缓存 信息",
         "/de/alerts": "获取 警报 信息",
         "/de/plain/cycles": "获取 平原循环 信息",
         "/de/archsortie": "获取 执行官周常 信息",
