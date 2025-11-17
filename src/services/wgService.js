@@ -167,10 +167,44 @@ async function getFissures(data) {
   return fissures;
 }
 
+// TODO 入侵任务
+async function getInvasions(data) {
+  const invasions = [];
+  data.data.invasions.forEach((item) => {
+    if (item.completion < 0) return;
+    invasions.push({
+      activation: item.activation,
+      node: item.node,
+      desc: item.desc,
+      // 进度百分比
+      completion: Number(item.completion).toFixed(2),
+      // FIXME 从这里计算 count是进度，有正负数。requireRuns是总数
+      count: item.count,
+      requireRuns: item.requireRuns,
+      attacker: {
+        faction: item.attackingFaction,
+        reward: item.attackerReward.countedItems.map((item) => ({
+          type: item.type,
+          count: item.count,
+        })),
+      },
+      defender: {
+        faction: item.defendingFaction,
+        reward: item.defender.reward.countedItems.map((item) => ({
+          type: item.type,
+          count: item.count,
+        })),
+      },
+    });
+  });
+  return invasions;
+}
+
 module.exports = {
   getEvents,
   getAlerts,
   getSortie,
   getPlainJobs,
   getFissures,
+  getInvasions,
 };

@@ -71,6 +71,17 @@ const wgController = {
       );
     }
   },
+  getInvasions: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const invasions = await wgService.getInvasions(data);
+      res.json(success(invasions));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护
