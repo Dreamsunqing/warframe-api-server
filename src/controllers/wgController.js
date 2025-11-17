@@ -16,6 +16,21 @@ const wgController = {
       );
     }
   },
+  // 获取所有处理过的国服数据
+  getProcessedCache: async (req, res) => {
+    try {
+      const processedData = await wgCache.buildProcessedCache();
+      res.json(success(processedData));
+    } catch (error) {
+      res.json(
+        error({
+          success: false,
+          message: error?.message || "Server error",
+        })
+      );
+    }
+  },
+
   getEvents: async (req, res) => {
     try {
       const data = await ensureCache();
@@ -98,6 +113,17 @@ const wgController = {
       const data = await ensureCache();
       const deltav = await wgService.getDeltav(data);
       res.json(success(deltav));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
+  getCycle: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const cycle = await wgService.getCycle(data);
+      res.json(success(cycle));
     } catch (err) {
       res.json(
         error({ success: false, message: err?.message || "Server error" })

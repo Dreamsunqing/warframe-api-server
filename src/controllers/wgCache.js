@@ -102,6 +102,7 @@ async function buildProcessedCache() {
   try {
     const data = await ensureCache();
     return {
+      // TODO 新增数据在此添加
       events: await wgService.getEvents(data),
       alerts: await wgService.getAlerts(data),
       sortie: await wgService.getSortie(data),
@@ -110,6 +111,7 @@ async function buildProcessedCache() {
       invasions: await wgService.getInvasions(data),
       voidTrader: await wgService.getVoidTrader(data),
       deltav: await wgService.getDeltav(data),
+      cycle: await wgService.getCycle(data),
     };
   } catch (err) {
     console.error("[wgCache]构建处理后缓存失败:", err);

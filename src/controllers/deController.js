@@ -126,7 +126,7 @@ const getFissures = async (req, res) => {
   }
 };
 
-// FIXME 获取未处理过的数据缓存
+// FIXME 获取原始数据缓存
 const getALl = async (req, res) => {
   try {
     const warframeData = await ensureCache();

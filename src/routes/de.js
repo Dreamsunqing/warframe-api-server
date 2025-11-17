@@ -1,4 +1,4 @@
-// FIXME 路由组织（de）
+// FIXME 路由（de）
 const express = require("express");
 const router = express.Router();
 const deController = require("../controllers/deController.js");

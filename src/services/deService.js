@@ -56,6 +56,7 @@ async function plainCycleProcess(data) {
   const deData = data;
   // 从国际服api获取原始数据，地球和王境推算
   const cache = {
+    地球: {},
     夜灵平原:
       deData?.SyndicateMissions.find((one) => one.Tag === "CetusSyndicate") ||
       {},
@@ -68,7 +69,6 @@ async function plainCycleProcess(data) {
     扎里曼:
       deData?.SyndicateMissions.find((one) => one.Tag === "ZarimanSyndicate") ||
       {},
-    地球: {},
     双衍王境: {},
   };
   const cycleItems = [];

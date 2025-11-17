@@ -225,7 +225,7 @@ async function getVoidTrader(data) {
   };
 }
 
-// 达尔特惠
+// TODO 达尔特惠
 async function getDeltav(data) {
   const deltav = data.data.dailyDeals;
   const items = [];
@@ -252,6 +252,66 @@ async function getDeltav(data) {
   };
 }
 
+// TODO 获取循环状态
+async function getCycle(data) {
+  const { earthCycle, cetusCycle, cambionCycle, zarimanCycle, vallisCycle } =
+    data.data;
+  const cycleInfo = {
+    地球: earthCycle,
+    夜灵平原: cetusCycle,
+    奥布山谷: vallisCycle,
+    魔胎之境: cambionCycle,
+    扎里曼: zarimanCycle,
+    双衍王境: {},
+  };
+  // FIXME 待修改 王境开始时间
+  const dub = {
+    双衍王境: [
+      { state: "joy", name: "喜悦", duration: 7200000, minute: "120m" },
+      { state: "anger", name: "愤怒", duration: 7200000, minute: "120m" },
+      { state: "envy", name: "嫉妒", duration: 7200000, minute: "120m" },
+      { state: "sorrow", name: "悲伤", duration: 7200000, minute: "120m" },
+      { state: "fear", name: "恐惧", duration: 7200000, minute: "120m" },
+    ],
+  };
+  function formatState(state) {
+    if (state == "day") {
+      return "白昼";
+    } else if (state == "night") {
+      return "夜晚";
+    } else if (state == "cold") {
+      return "寒冷";
+    } else if (state == "warm") {
+      return "温暖";
+    } else if (state == "fass") {
+      return "秩序";
+    } else if (state == "vome") {
+      return "混乱";
+    } else if (state == "grineer") {
+      return "蠕虫女皇入侵者";
+    } else if (state == "corpus") {
+      return "帕尔沃斯的部队";
+    }
+  }
+
+  const cycle = [];
+  for (const key in cycleInfo) {
+    const item = cycleInfo[key];
+    // FIXME 待修改 王境开始时间
+    if (key == "双衍王境") {
+      continue;
+    }
+    cycle.push({
+      activation: item.activation,
+      expiry: item.expiry,
+      name: key,
+      state: formatState(item.state) || formatState(item.active),
+    });
+  }
+  return cycle;
+}
+
+// TODO 获取
 module.exports = {
   getEvents,
   getAlerts,
@@ -261,4 +321,5 @@ module.exports = {
   getInvasions,
   getVoidTrader,
   getDeltav,
+  getCycle,
 };

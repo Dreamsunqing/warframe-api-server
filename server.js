@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
       },
       wg: {
         "/wg/all": "获取 国服原始数据 信息",
+        "/wg/all/process": "获取 国服处理过的数据缓存 信息",
         "/wg/events": "获取 事件 信息",
         "/wg/alerts": "获取 警报 信息",
         "/wg/sortie": "获取 每日突击 信息",
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
         "/wg/invasions": "获取 入侵 信息",
         "/wg/voidTrader": "获取 虚空商人 信息",
         "/wg/deltav": "获取 每日折扣 信息",
+        "/wg/cycle": "获取 平原循环 信息",
         正在开发中: "请期待",
       },
     },
