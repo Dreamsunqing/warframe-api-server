@@ -108,6 +108,8 @@ async function buildProcessedCache() {
       plainJobs: await wgService.getPlainJobs(data),
       fissures: await wgService.getFissures(data),
       invasions: await wgService.getInvasions(data),
+      voidTrader: await wgService.getVoidTrader(data),
+      deltav: await wgService.getDeltav(data),
     };
   } catch (err) {
     console.error("[wgCache]构建处理后缓存失败:", err);

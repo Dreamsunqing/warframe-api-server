@@ -10,4 +10,7 @@ router.get("/sortie", wgController.getSortie);
 router.get("/plainJobs", wgController.getPlainJobs);
 router.get("/fissures", wgController.getFissures);
 router.get("/invasions", wgController.getInvasions);
+router.get("/voidTrader", wgController.getVoidTrader);
+router.get("/deltav", wgController.getDeltav);
+
 module.exports = router;

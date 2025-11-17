@@ -82,6 +82,28 @@ const wgController = {
       );
     }
   },
+  getVoidTrader: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const voidTrader = await wgService.getVoidTrader(data);
+      res.json(success(voidTrader));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
+  getDeltav: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const deltav = await wgService.getDeltav(data);
+      res.json(success(deltav));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护

@@ -200,6 +200,58 @@ async function getInvasions(data) {
   return invasions;
 }
 
+// TODO 虚空商人
+async function getVoidTrader(data) {
+  const voidTrader = data.data.voidTrader;
+  // if (voidTrader.activation > Date.now()) return true;
+  return {
+    activation: voidTrader.activation,
+    expiry: voidTrader.expiry,
+    name: voidTrader.character,
+    node: voidTrader.location,
+    type: voidTrader.type,
+    // 还有多久来
+    start: voidTrader.startString,
+    // 还有多久走
+    end: voidTrader.endString,
+    state: voidTrader.activation < Date.now() ? "到达" : "离开",
+    // FIXME 虚空商人物品 11-28 11-30 注意完善
+    inventory: voidTrader.inventory.map((item) => ({
+      // type: item.type,
+      // count: item.count,
+      尚未确定数据结构: "11-28 11-30 注意完善",
+      item: item,
+    })),
+  };
+}
+
+// 达尔特惠
+async function getDeltav(data) {
+  const deltav = data.data.dailyDeals;
+  const items = [];
+  deltav.forEach((item) => {
+    items.push({
+      activation: item.activation,
+      expiry: item.expiry,
+      // FIXME 商品名称 需要映射到中文
+      name: item.item,
+      // 原价，
+      // 销售价格，
+      // 总共，
+      // 售出，
+      // 折扣
+      originalPrice: item.originalPrice,
+      salePrice: item.salePrice,
+      total: item.total,
+      sold: item.sold,
+      discount: item.discount,
+    });
+  });
+  return {
+    items: items,
+  };
+}
+
 module.exports = {
   getEvents,
   getAlerts,
@@ -207,4 +259,6 @@ module.exports = {
   getPlainJobs,
   getFissures,
   getInvasions,
+  getVoidTrader,
+  getDeltav,
 };

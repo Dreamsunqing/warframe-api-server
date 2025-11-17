@@ -31,6 +31,8 @@ app.get("/", (req, res) => {
         "/wg/plainJobs": "获取 平原赏金 信息",
         "/wg/fissures": "获取 虚空裂隙 信息",
         "/wg/invasions": "获取 入侵 信息",
+        "/wg/voidTrader": "获取 虚空商人 信息",
+        "/wg/deltav": "获取 每日折扣 信息",
         正在开发中: "请期待",
       },
     },
