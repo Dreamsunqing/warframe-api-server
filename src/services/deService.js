@@ -110,13 +110,20 @@ async function alertProcess(data, lang = "zh") {
     // 处理警报数据
     const Alerts = [];
     art.forEach((one) => {
+      const rewadItems = [];
+      if (one.MissionInfo.missionReward) {
+        one.MissionInfo.missionReward.countedItems.forEach((item) => {
+          rewadItems.push({
+            type: item.ItemType,
+            count: item.ItemCount,
+          });
+        });
+      }
       Alerts.push({
         node:
           solNodes[one.MissionInfo.location]?.value ||
           one.MissionInfo.location ||
           "未知节点",
-        // 敌人等级
-        enemyLevel: `${one.MissionInfo.minEnemyLevel} - ${one.MissionInfo.maxEnemyLevel}`,
         type:
           missionTypes[one.MissionInfo.missionType]?.value ||
           one.MissionInfo.missionType ||
@@ -124,8 +131,13 @@ async function alertProcess(data, lang = "zh") {
         factions: factionsData[one.MissionInfo.faction].value,
         activation: new Date(Number(one.Activation.$date.$numberLong)),
         expiry: new Date(Number(one.Expiry.$date.$numberLong)),
+        // 敌人等级
+        enemyLevel: `${one.MissionInfo.minEnemyLevel} - ${one.MissionInfo.maxEnemyLevel}`,
         // TODO 警报奖励未来开发
-        rewards: one.MissionInfo.missionReward,
+        rewards: {
+          credits: one.MissionInfo.missionReward.credits,
+          countedItems: rewadItems,
+        },
         // other: [
         //   one.MissionInfo.levelOverride,
         //   one.MissionInfo.enemySpec,

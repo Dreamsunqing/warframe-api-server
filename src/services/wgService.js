@@ -55,12 +55,12 @@ async function getAlerts(data) {
       );
     }
     alerts.push({
-      activation: item.activation,
-      expiry: item.expiry,
-      name: item.mission.description,
       node: item.mission.node,
       type: item.mission.type,
       faction: item.mission.faction,
+      activation: item.activation,
+      expiry: item.expiry,
+      name: item.mission.description,
       rewards: {
         credits: item.mission.reward.credits,
         countedItems: rewardItems,
@@ -302,10 +302,10 @@ async function getCycle(data) {
       continue;
     }
     cycle.push({
+      name: key,
+      stateName: formatState(item.state) || formatState(item.active),
       activation: item.activation,
       expiry: item.expiry,
-      name: key,
-      state: formatState(item.state) || formatState(item.active),
     });
   }
   return cycle;

@@ -16,11 +16,11 @@ const getPlainCycle = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.plainCycleProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -31,11 +31,11 @@ const getAlert = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.alertProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -47,11 +47,11 @@ const getArchStorie = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.archStorieProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -63,11 +63,11 @@ const getShipProgress = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.constructionProgress(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -79,11 +79,11 @@ const getInvasions = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.invasionsProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -94,11 +94,11 @@ const getSortie = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.sortieProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
@@ -110,8 +110,13 @@ const getStellPathreward = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.stellPathrewardProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
-    res.json(error());
+  } catch (err) {
+    res.json(
+      error({
+        success: false,
+        message: err?.message || "Server error",
+      })
+    );
   }
 };
 
@@ -121,8 +126,13 @@ const getFissures = async (req, res) => {
     const warframeData = await ensureCache();
     const data = await deService.fissureProcess(warframeData);
     res.json(success(data));
-  } catch (error) {
-    res.json(error());
+  } catch (err) {
+    res.json(
+      error({
+        success: false,
+        message: err?.message || "Server error",
+      })
+    );
   }
 };
 
@@ -132,21 +142,26 @@ const getALl = async (req, res) => {
     const warframeData = await ensureCache();
     const data = warframeData;
     res.json(success(data));
-  } catch (error) {
-    res.json(error());
+  } catch (err) {
+    res.json(
+      error({
+        success: false,
+        message: err?.message || "Server error",
+      })
+    );
   }
 };
 
 // FIXME 获取处理过的数据缓存
 const getProcessedCache = async (req, res) => {
   try {
-    const processedData = await deCache.getProcessedCache();
+    const processedData = await deCache.buildProcessedCache();
     res.json(success(processedData));
-  } catch (error) {
+  } catch (err) {
     res.json(
       error({
         success: false,
-        message: error?.message || "Server error",
+        message: err?.message || "Server error",
       })
     );
   }
