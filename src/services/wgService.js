@@ -311,6 +311,17 @@ async function getCycle(data) {
   return cycle;
 }
 
+// TODO 建造进度
+async function getConstructionProgress(data) {
+  const constructionProgress = data.data.constructionProgress;
+  return {
+    fomorianName: "巨人战舰",
+    fomorianProgress: constructionProgress.fomorianProgress,
+    razorbackName: "利刃豺狼战舰",
+    razorbackProgress: constructionProgress.razorbackProgress,
+  };
+}
+
 // TODO 获取
 module.exports = {
   getEvents,
@@ -322,4 +333,5 @@ module.exports = {
   getVoidTrader,
   getDeltav,
   getCycle,
+  getConstructionProgress,
 };

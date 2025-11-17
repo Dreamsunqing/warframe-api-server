@@ -130,6 +130,19 @@ const wgController = {
       );
     }
   },
+  getConstructionProgress: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const constructionProgress = await wgService.getConstructionProgress(
+        data
+      );
+      res.json(success(constructionProgress));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护
