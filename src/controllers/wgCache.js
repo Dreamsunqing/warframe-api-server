@@ -114,6 +114,7 @@ async function buildProcessedCache() {
       cycle: await wgService.getCycle(data),
       constructionProgress: await wgService.getConstructionProgress(data),
       steelRewad: await wgService.getSteelRewad(data),
+      archSortie: await wgService.getArchSortie(data),
     };
   } catch (err) {
     console.error("[wgCache]构建处理后缓存失败:", err);

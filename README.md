@@ -41,6 +41,9 @@
   - `GET /wg/voidTrader` 虚空商人,
   - `GET /wg/deltav` 达尔特惠,
   - `GET /wg/events` 事件,
+  - `GET /wg/constructionProgress` 建造进度,
+  - `GET /wg/steelRewad` 钢铁之路每周奖励（含常驻）,
+  - `GET /wg/archSortie` 执行官周常,
 
 **缓存机制**
 

@@ -180,7 +180,7 @@ async function getInvasions(data) {
       completion: Number(item.completion).toFixed(2),
       // FIXME 从这里计算 count是进度，有正负数。requireRuns是总数
       count: item.count,
-      requireRuns: item.requireRuns,
+      requireRuns: item.requiredRuns,
       attacker: {
         faction: item.attackingFaction,
         reward: item.attackerReward.countedItems.map((item) => ({
@@ -345,6 +345,45 @@ async function getSteelRewad(data) {
   };
 }
 
+// TODO 执行官周常
+async function getArchSortie(data) {
+  const archSortie = data.data.archonHunt;
+  const archBoss = {
+    SORTIE_BOSS_BOREAL: {
+      name: "诡文枭主",
+      faction: "合一众",
+      reward: "蔚蓝执刑官源力石",
+    },
+    SORTIE_BOSS_AMAR: {
+      name: "欺谋狼主",
+      faction: "合一众",
+      reward: "深红执刑官源力石",
+    },
+    SORTIE_BOSS_NIRA: {
+      name: "混沌蛇主",
+      faction: "合一众",
+      reward: "琥珀执刑官源力石",
+    },
+  };
+
+  const missions = [];
+  archSortie.missions.forEach((item, index) => {
+    missions.push({
+      index: index + 1,
+      node: item.node,
+      type: item.type,
+    });
+  });
+  return {
+    activation: archSortie.activation,
+    expiry: archSortie.expiry,
+    boss: archBoss[archSortie.boss]?.name || archSortie.boss,
+    faction: archBoss[archSortie.boss]?.faction || archSortie.faction,
+    reward: archBoss[archSortie.boss]?.reward || archSortie.reward,
+    missions: missions,
+  };
+}
+
 // TODO 获取
 module.exports = {
   getEvents,
@@ -358,4 +397,5 @@ module.exports = {
   getCycle,
   getConstructionProgress,
   getSteelRewad,
+  getArchSortie,
 };

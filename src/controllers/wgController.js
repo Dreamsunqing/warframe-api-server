@@ -42,6 +42,7 @@ const wgController = {
       );
     }
   },
+
   getAlerts: async (req, res) => {
     try {
       const data = await ensureCache();
@@ -148,6 +149,17 @@ const wgController = {
       const data = await ensureCache();
       const steelRewad = await wgService.getSteelRewad(data);
       res.json(success(steelRewad));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
+  getArchSortie: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const archSortie = await wgService.getArchSortie(data);
+      res.json(success(archSortie));
     } catch (err) {
       res.json(
         error({ success: false, message: err?.message || "Server error" })
