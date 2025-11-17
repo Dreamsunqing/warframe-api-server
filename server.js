@@ -36,6 +36,7 @@ app.get("/", (req, res) => {
         "/wg/constructionProgress": "获取 建造进度 信息",
         "/wg/fissures": "获取 虚空裂隙 信息",
         "/wg/voidTrader": "获取 虚空商人 信息",
+        "/wg/steelRewad": "获取 钢铁每周奖励,常驻奖励 信息",
         正在开发中: "请期待",
       },
     },

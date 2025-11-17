@@ -143,6 +143,17 @@ const wgController = {
       );
     }
   },
+  getSteelRewad: async (req, res) => {
+    try {
+      const data = await ensureCache();
+      const steelRewad = await wgService.getSteelRewad(data);
+      res.json(success(steelRewad));
+    } catch (err) {
+      res.json(
+        error({ success: false, message: err?.message || "Server error" })
+      );
+    }
+  },
 };
 
 // 初始化缓存维护

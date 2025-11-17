@@ -18,5 +18,6 @@ router.get("/voidTrader", wgController.getVoidTrader);
 router.get("/deltav", wgController.getDeltav);
 router.get("/cycle", wgController.getCycle);
 router.get("/constructionProgress", wgController.getConstructionProgress);
+router.get("/stellrewad", wgController.getSteelRewad);
 
 module.exports = router;

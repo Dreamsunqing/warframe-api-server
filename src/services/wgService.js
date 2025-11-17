@@ -322,6 +322,29 @@ async function getConstructionProgress(data) {
   };
 }
 
+// TODO 钢铁之路奖励
+async function getSteelRewad(data) {
+  const steelRewad = data.data.steelPath;
+  const evergreens = [];
+  steelRewad.evergreens.forEach((item) => {
+    evergreens.push({
+      name: item.name,
+      cost: item.cost,
+    });
+  });
+  return {
+    activation: steelRewad.activation,
+    expiry: steelRewad.expiry,
+    currentReward: {
+      name: steelRewad.currentReward.name,
+      cost: steelRewad.currentReward.cost,
+    },
+    // 每周奖励循环池
+    rotation: steelRewad.rotation,
+    evergreens: evergreens,
+  };
+}
+
 // TODO 获取
 module.exports = {
   getEvents,
@@ -334,4 +357,5 @@ module.exports = {
   getDeltav,
   getCycle,
   getConstructionProgress,
+  getSteelRewad,
 };
