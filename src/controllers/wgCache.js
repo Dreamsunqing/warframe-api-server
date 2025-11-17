@@ -103,18 +103,18 @@ async function buildProcessedCache() {
     const data = await ensureCache();
     return {
       // TODO 新增数据在此添加
-      events: await wgService.getEvents(data),
       alerts: await wgService.getAlerts(data),
-      sortie: await wgService.getSortie(data),
-      plainJobs: await wgService.getPlainJobs(data),
-      fissures: await wgService.getFissures(data),
+      cycle: await wgService.getCycle(data),
+      archSortie: await wgService.getArchSortie(data),
+      constructionProgress: await wgService.getConstructionProgress(data),
       invasions: await wgService.getInvasions(data),
+      sortie: await wgService.getSortie(data),
+      steelPathRewad: await wgService.getSteelRewad(data),
+      fissures: await wgService.getFissures(data),
+      events: await wgService.getEvents(data),
+      plainJobs: await wgService.getPlainJobs(data),
       voidTrader: await wgService.getVoidTrader(data),
       deltav: await wgService.getDeltav(data),
-      cycle: await wgService.getCycle(data),
-      constructionProgress: await wgService.getConstructionProgress(data),
-      steelRewad: await wgService.getSteelRewad(data),
-      archSortie: await wgService.getArchSortie(data),
     };
   } catch (err) {
     console.error("[wgCache]构建处理后缓存失败:", err);

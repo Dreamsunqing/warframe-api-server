@@ -133,20 +133,11 @@ async function alertProcess(data, lang = "zh") {
         expiry: new Date(Number(one.Expiry.$date.$numberLong)),
         // 敌人等级
         enemyLevel: `${one.MissionInfo.minEnemyLevel} - ${one.MissionInfo.maxEnemyLevel}`,
-        // TODO 警报奖励未来开发
+        // TODO 警报奖励未来 映射
         rewards: {
           credits: one.MissionInfo.missionReward.credits,
           countedItems: rewadItems,
         },
-        // other: [
-        //   one.MissionInfo.levelOverride,
-        //   one.MissionInfo.enemySpec,
-        //   one.MissionInfo.extraEnemySpec,
-        //   one.MissionInfo.descText,
-        //   one.MissionInfo.maxWaveNum,
-        //   one.Tag,
-        //   one.ForceUnlock,
-        // ],
       });
     });
     if (Alerts.length === 0) {
@@ -155,11 +146,11 @@ async function alertProcess(data, lang = "zh") {
       };
     }
     return Alerts;
-  } catch (error) {
+  } catch (err) {
     // 错误处理
     console.error("处理警报数据时出错:", {
-      message: error.message,
-      stack: error.stack,
+      message: err.message,
+      stack: err.stack,
     });
     throw new Error("获取警报数据失败");
   }
@@ -191,7 +182,8 @@ async function archStorieProcess(data, lang = "zh") {
         archBosses[liteSortie.Boss]?.reward || liteSortie.reward || "未知奖励",
 
       // 任务列表处理
-      missions: liteSortie.Missions.map((one) => ({
+      missions: liteSortie.Missions.map((one, index) => ({
+        index: index + 1,
         node: solNodes[one.node]?.value || one.node || "未知节点",
         type:
           missionTypes[one.missionType]?.value ||
@@ -226,10 +218,10 @@ async function constructionProgress(data) {
   }
 
   const Progress = {
-    fomorian: Math.min(data.ProjectPct[0], 100).toFixed(2),
     fomorianName: "巨人战舰",
-    razorback: Math.min(data.ProjectPct[1], 100).toFixed(2),
+    fomorianProgress: Math.min(data.ProjectPct[0], 100).toFixed(2),
     razorbackName: "利刃豺狼舰队",
+    razorbackProgress: Math.min(data.ProjectPct[1], 100).toFixed(2),
   };
   return Progress;
 }
@@ -237,6 +229,7 @@ async function constructionProgress(data) {
 function invasionsReward(value, itemUniqueName) {
   // 增加 itemUniqueName 参数传递
   if (!value || !value.countedItems) return "";
+  const rewards = [];
   const rewardList = value.countedItems.map((one) => {
     one.ItemType = one.ItemType.toLowerCase();
     if (!itemUniqueName[one.ItemType]) {
@@ -244,9 +237,10 @@ function invasionsReward(value, itemUniqueName) {
     }
 
     const name = itemUniqueName[one.ItemType]?.value || one.ItemType;
-    return `${one.ItemCount} ${name}`;
+    rewards.push(`${one.ItemCount} X ${name}`);
+    return rewards;
   });
-  return rewardList.join(" + ");
+  return rewards;
 }
 
 // FIXME 获取入侵数据
@@ -313,8 +307,9 @@ async function sortieProcess(data, lang = "zh") {
         Number(data.Sorties[0].Activation.$date.$numberLong)
       ),
       expiry: new Date(Number(data.Sorties[0].Expiry.$date.$numberLong)),
-      variants: data.Sorties[0].Variants.map((one) => {
+      sortieMissions: data.Sorties[0].Variants.map((one, index) => {
         return {
+          index: index + 1,
           node: solNodes[one.node]?.value || one.node || "未知节点",
           missionType:
             missionTypes[one.missionType]?.value ||
@@ -355,7 +350,7 @@ async function stellPathrewardProcess() {
         name: currentInfo.name,
         cost: currentInfo.cost,
       },
-      staticReward: [
+      evergreens: [
         {
           name: "10,000 赤毒",
           cost: 15,
@@ -471,10 +466,10 @@ async function fissureProcess(data, lang = "zh") {
         activation: new Date(Number(one.Activation.$date.$numberLong)),
         expiry: new Date(Number(one.Expiry.$date.$numberLong)),
         node: solNodes[one.Node]?.value || one.Node,
-        missionType: missionTypes[one.MissionType]?.value || one.MissionType,
+        type: missionTypes[one.MissionType]?.value || one.MissionType,
         faction: solNodes[one.Node]?.enemy || "未知",
-        tier: fissureLevel[one.Modifier]?.value || one.Modifier,
-        tierNum: fissureLevel[one.Modifier]?.num || one.Modifier,
+        tierName: fissureLevel[one.Modifier]?.value || one.Modifier,
+        tier: fissureLevel[one.Modifier]?.num || one.Modifier,
         isStorm: false,
         isHard: Boolean(one.Hard),
       });
@@ -485,12 +480,11 @@ async function fissureProcess(data, lang = "zh") {
         activation: new Date(Number(one.Activation.$date.$numberLong)),
         expiry: new Date(Number(one.Expiry.$date.$numberLong)),
         node: solNodes[one.Node]?.value || one.Node,
-        missionType: solNodes[one.Node]?.type || one.Node,
+        type: solNodes[one.Node]?.type || one.Node,
         faction: solNodes[one.Node]?.enemy || "未知",
-        tier:
+        tierName:
           fissureLevel[one.ActiveMissionTier]?.value || one.ActiveMissionTier,
-        tierNum:
-          fissureLevel[one.ActiveMissionTier]?.num || one.ActiveMissionTier,
+        tier: fissureLevel[one.ActiveMissionTier]?.num || one.ActiveMissionTier,
         isStorm: true,
         isHard: false,
       });
@@ -504,8 +498,8 @@ async function fissureProcess(data, lang = "zh") {
       if (b.isStorm) numB[0] = 1;
       if (a.isHard) numA[1] = 1;
       if (b.isHard) numB[1] = 1;
-      numA[2] = a.tierNum;
-      numB[2] = b.tierNum;
+      numA[2] = a.tier;
+      numB[2] = b.tier;
       //   计算权重
       const resultA = 100 * numA[0] + 10 * numA[1] + numA[2];
       const resultB = 100 * numB[0] + 10 * numB[1] + numB[2];

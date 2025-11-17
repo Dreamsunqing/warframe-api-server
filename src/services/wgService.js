@@ -74,7 +74,7 @@ async function getSortie(data) {
   const sortieMissions = [];
   data.data.sortie.variants.forEach((item, index) =>
     sortieMissions.push({
-      index: index,
+      index: index + 1,
       node: item.node,
       missionType: item.missionType,
       modifier: item.modifier,
@@ -84,8 +84,6 @@ async function getSortie(data) {
   const sortie = {
     activation: data.data.sortie.activation,
     expiry: data.data.sortie.expiry,
-    boss: data.data.sortie.boss,
-    faction: data.data.sortie.faction,
     sortieMissions: sortieMissions,
   };
 
@@ -140,13 +138,13 @@ async function getFissures(data) {
     fissures.push({
       activation: item.activation,
       expiry: item.expiry,
-      tier: tier,
-      tierName: tierName,
       node: item.node,
       type: item.missionType,
       faction: item.enemy,
-      isHard: item.isHard,
-      isStorm: item.isStorm,
+      tierName: tierName,
+      tier: tier,
+      isHard: Boolean(item.isHard),
+      isStorm: Boolean(item.isStorm),
     });
   });
   // TODO 映射 node faction 到 中文，从 i18n 中读取 solNodes.json
@@ -173,7 +171,6 @@ async function getInvasions(data) {
   data.data.invasions.forEach((item) => {
     if (item.completion < 0) return;
     invasions.push({
-      activation: item.activation,
       node: item.node,
       desc: item.desc,
       // 进度百分比
@@ -183,17 +180,15 @@ async function getInvasions(data) {
       requireRuns: item.requiredRuns,
       attacker: {
         faction: item.attackingFaction,
-        reward: item.attackerReward.countedItems.map((item) => ({
-          type: item.type,
-          count: item.count,
-        })),
+        reward: item.attackerReward.countedItems.map(
+          (item) => +item.count + " X" + item.type
+        ),
       },
       defender: {
         faction: item.defendingFaction,
-        reward: item.defender.reward.countedItems.map((item) => ({
-          type: item.type,
-          count: item.count,
-        })),
+        reward: item.defender.reward.countedItems.map(
+          (item) => +item.count + " X" + item.type
+        ),
       },
     });
   });

@@ -104,10 +104,10 @@ async function buildProcessedCache() {
     const data = cachedDeData;
     return {
       // TODO 新增数据在此添加
-      plainCycles: await deService.plainCycleProcess(data, "zh"),
       alerts: await deService.alertProcess(data, "zh"),
-      archonHunt: await deService.archStorieProcess(data, "zh"),
-      shipProgress: await deService.constructionProgress(data),
+      cycles: await deService.plainCycleProcess(data, "zh"),
+      archSortie: await deService.archStorieProcess(data, "zh"),
+      constructionProgress: await deService.constructionProgress(data),
       invasions: await deService.invasionsProcess(data, "zh"),
       sortie: await deService.sortieProcess(data, "zh"),
       steelPathReward: await deService.stellPathrewardProcess(),
