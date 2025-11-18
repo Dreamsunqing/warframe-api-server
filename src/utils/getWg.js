@@ -2,6 +2,13 @@
 // 最小化 Puppeteer 抓取：后台静默打开 -> 获取世界状态 JSON -> 退出
 const puppeteer = require("puppeteer-core");
 const fs = require("fs");
+const IS_VERCEL = !!process.env.VERCEL;
+let chromium = null;
+if (IS_VERCEL) {
+  try {
+    chromium = require("@sparticuz/chromium");
+  } catch {}
+}
 
 // 国服世界状态地址
 const CONFIG = {
@@ -54,21 +61,29 @@ function resolveChromePath() {
 async function getwg() {
   let browser;
   try {
-    // 获取正确的浏览器地址
-    const execPath = resolveChromePath();
-    // 浏览器启动配置
-    browser = await puppeteer.launch({
-      headless: true, // 无头模式是否启用
-      executablePath: execPath, // 浏览器环境地址
-      args: [
-        "--no-sandbox", // 禁用沙盒模式（解决docker、linux权限问题）
-        "--window-size=1920,1080", // 浏览器窗口尺寸
-        "--disable-infobars", // 阻止"Chrome正在被自动化测试控制"提示条
-        "--disable-dev-shm-usage", // 避免/dev/shm内存不足问题（Docker适用）
-      ],
-      // 注：此设置↓不影响响应式布局检测，仅控制截图/元素定位的基准尺寸
-      defaultViewport: { width: 1920, height: 1080 }, // 页面默认视口尺寸（与window-size参数协同作用）
-    });
+    // 启动浏览器环境
+    if (IS_VERCEL && chromium) {
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport:
+          chromium.defaultViewport || { width: 1920, height: 1080 },
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
+      });
+    } else {
+      const execPath = resolveChromePath();
+      browser = await puppeteer.launch({
+        headless: true,
+        executablePath: execPath,
+        args: [
+          "--no-sandbox",
+          "--window-size=1920,1080",
+          "--disable-infobars",
+          "--disable-dev-shm-usage",
+        ],
+        defaultViewport: { width: 1920, height: 1080 },
+      });
+    }
 
     // 创建页面
     const page = await browser.newPage();

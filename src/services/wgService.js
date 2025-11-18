@@ -1,8 +1,5 @@
 // FIXME 数据处理层 （wg）
 
-const {
-  combineLatest,
-} = require("puppeteer-core/lib/esm/third_party/rxjs/rxjs.js");
 
 async function getEvents(data) {
   const hort = [
@@ -28,7 +25,8 @@ async function getEvents(data) {
     },
   ];
   const events = [];
-  data.data.events.forEach((item) =>
+  const list = (data && data.data && data.data.events) || [];
+  list.forEach((item) =>
     events.push({
       name: item.description,
       title: item.tooltip,
@@ -42,7 +40,8 @@ async function getEvents(data) {
 }
 async function getAlerts(data) {
   const alerts = [];
-  data.data.alerts.map((item) => {
+  const list = (data && data.data && data.data.alerts) || [];
+  list.map((item) => {
     const rewardItems = [];
     if (item.mission) {
       item.mission.reward.countedItems.forEach((item) =>
@@ -72,7 +71,8 @@ async function getAlerts(data) {
 
 async function getSortie(data) {
   const sortieMissions = [];
-  data.data.sortie.variants.forEach((item, index) =>
+  const s = (data && data.data && data.data.sortie) || { variants: [] };
+  s.variants.forEach((item, index) =>
     sortieMissions.push({
       index: index + 1,
       node: item.node,
@@ -82,8 +82,8 @@ async function getSortie(data) {
     })
   );
   const sortie = {
-    activation: data.data.sortie.activation,
-    expiry: data.data.sortie.expiry,
+    activation: s.activation,
+    expiry: s.expiry,
     sortieMissions: sortieMissions,
   };
 
@@ -92,7 +92,8 @@ async function getSortie(data) {
 
 async function getPlainJobs(data) {
   const plainJobs = [];
-  data.data.syndicateMissions.forEach((item) => {
+  const list = (data && data.data && data.data.syndicateMissions) || [];
+  list.forEach((item) => {
     const jobs = [];
     if (item.jobs) {
       item.jobs.forEach((job) =>
@@ -118,7 +119,8 @@ async function getPlainJobs(data) {
 
 async function getFissures(data) {
   const fissures = [];
-  data.data.fissures.forEach((item) => {
+  const list = (data && data.data && data.data.fissures) || [];
+  list.forEach((item) => {
     const match = String(item.tierNum).match(/(\d)(?!.*\d)/);
     let tier = match ? Number(match[1]) : Number(item.tierNum);
     let tierName = "";
@@ -168,7 +170,8 @@ async function getFissures(data) {
 // TODO 入侵任务
 async function getInvasions(data) {
   const invasions = [];
-  data.data.invasions.forEach((item) => {
+  const list = (data && data.data && data.data.invasions) || [];
+  list.forEach((item) => {
     if (item.completion < 0) return;
     invasions.push({
       node: item.node,
@@ -181,7 +184,7 @@ async function getInvasions(data) {
       attacker: {
         faction: item.attackingFaction,
         reward: item.attackerReward.countedItems.map(
-          (item) => +item.count + " X" + item.type
+          (item) => +item.count + " X " + item.type
         ),
       },
       defender: {
@@ -197,7 +200,7 @@ async function getInvasions(data) {
 
 // TODO 虚空商人
 async function getVoidTrader(data) {
-  const voidTrader = data.data.voidTrader;
+  const voidTrader = (data && data.data && data.data.voidTrader) || {};
   // if (voidTrader.activation > Date.now()) return true;
   return {
     activation: voidTrader.activation,
@@ -222,7 +225,7 @@ async function getVoidTrader(data) {
 
 // TODO 达尔特惠
 async function getDeltav(data) {
-  const deltav = data.data.dailyDeals;
+  const deltav = (data && data.data && data.data.dailyDeals) || [];
   const items = [];
   deltav.forEach((item) => {
     items.push({
@@ -249,8 +252,13 @@ async function getDeltav(data) {
 
 // TODO 获取循环状态
 async function getCycle(data) {
-  const { earthCycle, cetusCycle, cambionCycle, zarimanCycle, vallisCycle } =
-    data.data;
+  const {
+    earthCycle,
+    cetusCycle,
+    cambionCycle,
+    zarimanCycle,
+    vallisCycle,
+  } = (data && data.data) || {};
   const cycleInfo = {
     地球: earthCycle,
     夜灵平原: cetusCycle,
@@ -296,6 +304,7 @@ async function getCycle(data) {
     if (key == "双衍王境") {
       continue;
     }
+    if (!item) continue;
     cycle.push({
       name: key,
       stateName: formatState(item.state) || formatState(item.active),
@@ -308,7 +317,7 @@ async function getCycle(data) {
 
 // TODO 建造进度
 async function getConstructionProgress(data) {
-  const constructionProgress = data.data.constructionProgress;
+  const constructionProgress = (data && data.data && data.data.constructionProgress) || {};
   return {
     fomorianName: "巨人战舰",
     fomorianProgress: constructionProgress.fomorianProgress,
@@ -319,7 +328,11 @@ async function getConstructionProgress(data) {
 
 // TODO 钢铁之路奖励
 async function getSteelRewad(data) {
-  const steelRewad = data.data.steelPath;
+  const steelRewad = (data && data.data && data.data.steelPath) || {
+    evergreens: [],
+    rotation: [],
+    currentReward: {},
+  };
   const evergreens = [];
   steelRewad.evergreens.forEach((item) => {
     evergreens.push({
@@ -342,7 +355,9 @@ async function getSteelRewad(data) {
 
 // TODO 执行官周常
 async function getArchSortie(data) {
-  const archSortie = data.data.archonHunt;
+  const archSortie = (data && data.data && data.data.archonHunt) || {
+    missions: [],
+  };
   const archBoss = {
     SORTIE_BOSS_BOREAL: {
       name: "诡文枭主",

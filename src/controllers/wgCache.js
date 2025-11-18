@@ -13,7 +13,10 @@ let cachedWgData = null;
 let cacheInitialized = false;
 let cacheLock = false;
 
-const CACHE_DIR = path.resolve(__dirname, "../../src/cache/wg");
+const IS_VERCEL = !!process.env.VERCEL;
+const CACHE_DIR = IS_VERCEL
+  ? path.resolve("/tmp/wg")
+  : path.resolve(__dirname, "../../src/cache/wg");
 const CACHE_REFRESH_INTERVAL = 60_000;
 const CACHE_SAVE_INTERVAL = 60_000;
 
@@ -76,6 +79,10 @@ let saveInterval = null;
 function startCacheMaintenance() {
   if (cacheInterval) clearInterval(cacheInterval);
   if (saveInterval) clearInterval(saveInterval);
+  if (IS_VERCEL) {
+    refreshCache().then(() => saveCache()).catch(() => {});
+    return;
+  }
   cacheInterval = setInterval(refreshCache, CACHE_REFRESH_INTERVAL);
   saveInterval = setInterval(saveCache, CACHE_SAVE_INTERVAL);
   refreshCache().then(() => saveCache());
@@ -104,12 +111,12 @@ async function buildProcessedCache() {
     return {
       // TODO 新增数据在此添加
       alerts: await wgService.getAlerts(data),
-      cycle: await wgService.getCycle(data),
+      cycles: await wgService.getCycle(data),
       archSortie: await wgService.getArchSortie(data),
       constructionProgress: await wgService.getConstructionProgress(data),
       invasions: await wgService.getInvasions(data),
       sortie: await wgService.getSortie(data),
-      steelPathRewad: await wgService.getSteelRewad(data),
+      steelPathReward: await wgService.getSteelRewad(data),
       fissures: await wgService.getFissures(data),
       events: await wgService.getEvents(data),
       plainJobs: await wgService.getPlainJobs(data),

@@ -82,6 +82,8 @@ async function plainCycleProcess(data) {
       startTime = utils.calcCycleStartTime(loopList, 1746691200097);
     } else if (key == "双衍王境") {
       startTime = utils.calcCycleStartTime(loopList, 1746734400000);
+    } else if (key == "奥布山谷") {
+      startTime = utils.calcCycleStartTime(loopList, 1763458802720);
     } else {
       startTime = Number(item.Activation?.$date.$numberLong);
     }

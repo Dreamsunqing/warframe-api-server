@@ -1,7 +1,7 @@
 // TODO deCache.js
 const path = require("path");
 const fs = require("fs");
-const { getDe } = require("../utils/getDe.js");
+const axios = require("axios");
 const deService = require("../services/deService.js");
 
 // FIXME Function：refreshCache
@@ -13,7 +13,10 @@ let cachedDeData = null;
 let cacheInitialized = false;
 let cacheLock = false;
 
-const CACHE_DIR = path.resolve(__dirname, "../../src/cache/de");
+const IS_VERCEL = !!process.env.VERCEL;
+const CACHE_DIR = IS_VERCEL
+  ? path.resolve("/tmp/de")
+  : path.resolve(__dirname, "../../src/cache/de");
 const CACHE_REFRESH_INTERVAL = 60_000;
 const CACHE_SAVE_INTERVAL = 60_000;
 
@@ -25,9 +28,14 @@ async function refreshCache() {
   if (cacheLock) return;
   cacheLock = true;
   try {
-    const newData = await getDe();
+    const resp = await axios.get(
+      "https://api.warframe.com/cdn/worldState.php",
+      { timeout: 10000 }
+    );
+    const newData = resp.data;
     cachedDeData = newData;
     cacheInitialized = true;
+    console.log(`[deCache]已刷新最新国际服数据: ${new Date().toISOString()}`);
   } catch (error) {
     console.error("Cache refresh failed:", error);
   } finally {
@@ -77,6 +85,10 @@ let saveInterval = null;
 function startCacheMaintenance() {
   if (cacheInterval) clearInterval(cacheInterval);
   if (saveInterval) clearInterval(saveInterval);
+  if (IS_VERCEL) {
+    refreshCache().then(() => saveCache()).catch(() => {});
+    return;
+  }
   cacheInterval = setInterval(refreshCache, CACHE_REFRESH_INTERVAL);
   saveInterval = setInterval(saveCache, CACHE_SAVE_INTERVAL);
   refreshCache().then(() => saveCache());
